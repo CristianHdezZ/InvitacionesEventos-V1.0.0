@@ -175,6 +175,8 @@
   <div class="toolbar">
     <button id="loadMusicaBtn">Ver sugerencias</button>
     <button id="exportMusicaBtn" class="ghost" type="button">Exportar CSV</button>
+    <a id="spotifyConnectBtn" class="ghost" href="/api/spotify-auth" target="_blank" rel="noopener" style="text-decoration:none; display:inline-block;">Conectar con Spotify</a>
+    <span id="spotifyEstado" class="hint" style="margin-left:8px;"></span>
   </div>
   <div id="musicaTableWrap"><p class="empty">Ingresa la clave y pulsa "Entrar" o "Ver sugerencias".</p></div>
 </div>
@@ -954,6 +956,8 @@ function iconoSvg(id, extraClass) {
   /* ==================================================================
      PANEL: SUGERENCIAS MUSICALES
      ================================================================== */
+  const spotifyEstado = document.getElementById('spotifyEstado');
+
   async function loadMusicaSugerencias(){
     musicaTableWrap.innerHTML = '<p class="empty">Cargando…</p>';
     try {
@@ -963,6 +967,7 @@ function iconoSvg(id, extraClass) {
         return;
       }
       const data = await res.json();
+      spotifyEstado.textContent = data.spotifyConectado ? 'Spotify conectado ✓' : 'Spotify no conectado';
       renderMusicaTable(data.sugerencias);
     } catch (err){
       musicaTableWrap.innerHTML = '<p class="error">No se pudo conectar con el servidor.</p>';
@@ -978,13 +983,14 @@ function iconoSvg(id, extraClass) {
       <tr>
         <td>${escapeHtml(r.cancion)}</td>
         <td>${escapeHtml(r.artista || '—')}</td>
+        <td>${r.enSpotify ? '✓' : '—'}${r.enSpotify ? '' : (r.spotifyNota ? ` <span class="hint">(${escapeHtml(r.spotifyNota)})</span>` : '')}</td>
         <td>${fmtDate(r.creado)}</td>
       </tr>
     `).join('');
 
     musicaTableWrap.innerHTML = `
       <table>
-        <thead><tr><th>Canción</th><th>Artista</th><th>Fecha</th></tr></thead>
+        <thead><tr><th>Canción</th><th>Artista</th><th>En Spotify</th><th>Fecha</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     `;

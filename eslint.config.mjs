@@ -9,6 +9,7 @@ export default [
         console: 'readonly',
         __dirname: 'readonly',
         fetch: 'readonly',
+        URLSearchParams: 'readonly',
         module: 'readonly',
         process: 'readonly',
         require: 'readonly',

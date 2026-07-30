@@ -1,8 +1,28 @@
-const { addSugerenciaMusical, listSugerenciasMusicales, allowMusicaAttempt, hasRedis } = require('../lib/store');
+const { addSugerenciaMusical, listSugerenciasMusicales, allowMusicaAttempt, getSpotifyRefreshToken, hasRedis } = require('../lib/store');
 const { requireAdmin } = require('../lib/admin-auth');
+const spotify = require('../lib/spotify');
 
 function sanitize(value, maxLen) {
   return typeof value === 'string' ? value.trim().slice(0, maxLen) : '';
+}
+
+async function intentarAgregarASpotify(cancion, artista) {
+  if (!spotify.configured) return { agregada: false, motivo: 'Spotify no esta configurado.' };
+
+  const refreshToken = await getSpotifyRefreshToken();
+  if (!refreshToken) return { agregada: false, motivo: 'Spotify aun no ha sido autorizado desde el panel.' };
+
+  try {
+    const { access_token: accessToken } = await spotify.refreshAccessToken(refreshToken);
+    const query = artista ? `${cancion} ${artista}` : cancion;
+    const track = await spotify.searchTrack(query, accessToken);
+    if (!track) return { agregada: false, motivo: 'No se encontro esa cancion en Spotify.' };
+    await spotify.addTrackToPlaylist(track.uri, accessToken);
+    return { agregada: true };
+  } catch (err) {
+    console.error('Error agregando cancion a Spotify:', err);
+    return { agregada: false, motivo: err.message };
+  }
 }
 
 function setCors(res) {
@@ -32,16 +52,20 @@ module.exports = async (req, res) => {
     const artista = sanitize(body.artista, 100);
     if (!cancion) return res.status(400).json({ ok: false, errors: ['Escribe el nombre de la cancion.'] });
 
+    const resultadoSpotify = await intentarAgregarASpotify(cancion, artista);
+
     const entry = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
       cancion,
       artista,
+      enSpotify: resultadoSpotify.agregada,
+      spotifyNota: resultadoSpotify.agregada ? '' : resultadoSpotify.motivo,
       creado: new Date().toISOString()
     };
 
     try {
       await addSugerenciaMusical(entry);
-      return res.status(200).json({ ok: true, id: entry.id });
+      return res.status(200).json({ ok: true, id: entry.id, enSpotify: entry.enSpotify });
     } catch (err) {
       console.error('Error guardando sugerencia musical:', err);
       return res.status(500).json({ ok: false, error: 'No se pudo guardar la sugerencia.' });
@@ -54,6 +78,7 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       ok: true,
       sugerencias: list.slice().reverse(),
+      spotifyConectado: Boolean(await getSpotifyRefreshToken()),
       storage: hasRedis ? 'upstash' : 'local-tmp (no persiste en produccion, configura Upstash)'
     });
   }

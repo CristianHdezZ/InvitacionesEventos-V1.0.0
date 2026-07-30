@@ -340,7 +340,8 @@ img{ max-width:100%; display:block; }
   background:var(--blanco); border:1px solid var(--blush-2); border-radius:var(--radius);
   padding:clamp(24px, 4vw, 40px); box-shadow:0 24px 50px -32px rgba(139,79,98,.4);
 }
-.ubicacion__maps{ display:grid; gap:16px; }
+.ubicacion__maps{ display:grid; gap:16px; order:2; }
+.detalle-card{ order:1; }
 .ubicacion__icono{
   width:64px; height:64px; margin-bottom:18px; border-radius:50%; display:flex; align-items:center; justify-content:center;
   background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
@@ -362,6 +363,8 @@ img{ max-width:100%; display:block; }
 .mapa-wrap iframe{ width:100%; height:100%; border:0; }
 @media (min-width:900px){
   .ubicacion{ grid-template-columns:minmax(240px, 320px) 1fr; gap:48px; align-items:center; }
+  .ubicacion__maps{ order:0; }
+  .detalle-card{ order:0; }
 }
 .btn-link{
   display:inline-flex; align-items:center; gap:9px;

@@ -20,6 +20,8 @@ const configHandler = require('./api/config');
 const adminSessionHandler = require('./api/admin-session');
 const musicaHandler = require('./api/musica');
 const musicaExportHandler = require('./api/musica-export');
+const spotifyAuthHandler = require('./api/spotify-auth');
+const spotifyCallbackHandler = require('./api/spotify-callback');
 
 const app = express();
 app.use(express.json());
@@ -38,6 +40,8 @@ app.all('/api/config', (req, res) => configHandler(req, res));
 app.all('/api/admin-session', (req, res) => adminSessionHandler(req, res));
 app.all('/api/musica', (req, res) => musicaHandler(req, res));
 app.all('/api/musica-export', (req, res) => musicaExportHandler(req, res));
+app.all('/api/spotify-auth', (req, res) => spotifyAuthHandler(req, res));
+app.all('/api/spotify-callback', (req, res) => spotifyCallbackHandler(req, res));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
