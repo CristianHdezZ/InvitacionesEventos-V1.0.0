@@ -211,7 +211,7 @@ const ESTILO_SELECTORES = {
   itinerarioTitulo:   ['.timeline__text strong'],
   itinerarioHora:     ['.timeline__text em'],
   ubicacionLugar:     ['.detalle-card h3'],
-  ubicacionDireccion: ['.detalle-card p'],
+  ubicacionDireccion: ['.ubicacion__direccion'],
   ubicacionHora:      ['.detalle-card__hora']
 };
 
@@ -317,8 +317,9 @@ function renderUbicacion(ubicacion) {
   if (!ubicacion) return;
   const h3 = document.querySelector('.detalle-card h3');
   const hora = document.querySelector('.detalle-card__hora');
-  const p = document.querySelector('.detalle-card p');
-  const iframe = document.querySelector('.mapa-wrap iframe');
+  const p = document.querySelector('.ubicacion__direccion');
+  const mapaFrame = document.getElementById('mapaEstaticoFrame');
+  const streetViewFrame = document.getElementById('mapaStreetViewFrame');
   const link = document.querySelector('.btn-link');
 
   if (h3 && ubicacion.nombreLugar) h3.textContent = ubicacion.nombreLugar;
@@ -326,7 +327,8 @@ function renderUbicacion(ubicacion) {
   if (p && ubicacion.nombreLugar) {
     p.innerHTML = escapeHtml(ubicacion.nombreLugar) + '<br>' + escapeHtml(ubicacion.direccion || '');
   }
-  if (iframe && ubicacion.mapaEmbedUrl) iframe.src = ubicacion.mapaEmbedUrl;
+  if (mapaFrame && ubicacion.mapaEmbedUrl) mapaFrame.src = ubicacion.mapaEmbedUrl;
+  if (streetViewFrame && ubicacion.streetViewUrl) streetViewFrame.src = ubicacion.streetViewUrl;
   if (link && ubicacion.mapaLink) link.href = ubicacion.mapaLink;
 }
 
@@ -837,6 +839,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     } finally {
       rsvpSubmit.disabled = false;
       rsvpSubmit.textContent = 'Enviar confirmación';
+    }
+  });
+
+  /* =========================================================
+     8. SUGERENCIA MUSICAL — formulario de sugerencias de canciones
+     ========================================================= */
+  const musicaForm = document.getElementById('musicaForm');
+  const musicaStatus = document.getElementById('musicaStatus');
+  const musicaSubmit = document.getElementById('musicaSubmit');
+  const musicaEndpoint = musicaForm.dataset.endpoint;
+
+  function setMusicaStatus(text, state){
+    musicaStatus.textContent = text;
+    musicaStatus.setAttribute('data-state', state || '');
+  }
+
+  musicaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Honeypot: si el campo oculto viene lleno, es un bot — ignorar en silencio.
+    if (musicaForm._gotcha.value){ return; }
+
+    const cancion = musicaForm.cancion.value.trim();
+    const artista = musicaForm.artista.value.trim();
+    if (!cancion) return;
+
+    musicaSubmit.disabled = true;
+    musicaSubmit.textContent = 'Enviando…';
+    setMusicaStatus('Enviando tu sugerencia…', '');
+
+    try {
+      const response = await fetch(musicaEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ cancion, artista })
+      });
+
+      let payload = null;
+      try { payload = await response.json(); } catch (parseErr) { /* respuesta sin JSON: se maneja abajo */ }
+
+      if (response.ok){
+        setMusicaStatus('¡Gracias! Ya anotamos tu sugerencia. 🎶', 'ok');
+        musicaForm.reset();
+      } else if (response.status === 429){
+        setMusicaStatus(payload?.error || 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.', 'error');
+      } else if (response.status === 400 && Array.isArray(payload?.errors) && payload.errors.length){
+        setMusicaStatus(payload.errors.join(' '), 'error');
+      } else {
+        setMusicaStatus(payload?.error || 'No pudimos enviar tu sugerencia. Inténtalo de nuevo en un momento.', 'error');
+      }
+    } catch (err){
+      setMusicaStatus('Sin conexión. Inténtalo de nuevo cuando tengas internet.', 'error');
+    } finally {
+      musicaSubmit.disabled = false;
+      musicaSubmit.textContent = 'Enviar sugerencia';
     }
   });
 

@@ -156,6 +156,7 @@
 
 <div class="tabs">
   <button class="tab-btn active" data-tab="rsvp">Confirmaciones</button>
+  <button class="tab-btn" data-tab="musica">Sugerencias musicales</button>
   <button class="tab-btn" data-tab="editor">Editar invitación</button>
 </div>
 
@@ -167,6 +168,15 @@
   </div>
   <div id="summary" class="summary"></div>
   <div id="tableWrap"><p class="empty">Ingresa la clave y pulsa "Entrar" o "Ver confirmaciones".</p></div>
+</div>
+
+<!-- ===================== PANEL: SUGERENCIAS MUSICALES ===================== -->
+<div class="panel" id="panel-musica">
+  <div class="toolbar">
+    <button id="loadMusicaBtn">Ver sugerencias</button>
+    <button id="exportMusicaBtn" class="ghost" type="button">Exportar CSV</button>
+  </div>
+  <div id="musicaTableWrap"><p class="empty">Ingresa la clave y pulsa "Entrar" o "Ver sugerencias".</p></div>
 </div>
 
 <!-- ===================== PANEL: EDITOR DE CONTENIDO ===================== -->
@@ -414,9 +424,20 @@
     <button type="button" class="ghost small" id="genMapaBtn">Generar mapa desde la dirección</button>
     <p class="hint">Usa el nombre del lugar + la dirección de arriba para armar el mapa automáticamente — no hace falta ir a Google Maps a copiar el código de inserción. Si prefieres un pin más exacto, puedes pegar tú mismo la URL de inserción en el campo de arriba.</p>
     <div class="field" style="margin-top:14px;">
-      <label>Vista previa</label>
+      <label>Vista previa del mapa</label>
       <div style="border-radius:6px; overflow:hidden; aspect-ratio:16/9; max-width:420px; border:1px solid var(--blush-2);">
         <iframe id="mapaPreview" width="100%" height="100%" style="border:0; display:block;" loading="lazy"></iframe>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label for="cfgStreetView">URL de Street View incrustado (Google Maps → Street View → Compartir → Insertar mapa)</label>
+      <input type="text" id="cfgStreetView" placeholder="https://www.google.com/maps/embed?pb=...">
+    </div>
+    <p class="hint">Se muestra junto al mapa como una segunda vista, a nivel de calle. Ábrela en Google Maps, entra a Street View en el punto exacto y usa Compartir → Insertar mapa para copiar la URL.</p>
+    <div class="field" style="margin-top:14px;">
+      <label>Vista previa de Street View</label>
+      <div style="border-radius:6px; overflow:hidden; aspect-ratio:16/9; max-width:420px; border:1px solid var(--blush-2);">
+        <iframe id="streetViewPreview" width="100%" height="100%" style="border:0; display:block;" loading="lazy"></iframe>
       </div>
     </div>
   </div>
@@ -444,6 +465,9 @@
   const exportBtn = document.getElementById('exportBtn');
   const summaryEl = document.getElementById('summary');
   const tableWrap = document.getElementById('tableWrap');
+  const loadMusicaBtn = document.getElementById('loadMusicaBtn');
+  const exportMusicaBtn = document.getElementById('exportMusicaBtn');
+  const musicaTableWrap = document.getElementById('musicaTableWrap');
 
   async function iniciarSesion(){
     const key = keyInput.value.trim();
@@ -839,6 +863,7 @@ function iconoSvg(id, extraClass) {
       btn.classList.add('active');
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
       if (btn.dataset.tab === 'editor') loadConfig();
+      if (btn.dataset.tab === 'musica') loadMusicaSugerencias();
     });
   });
 
@@ -847,6 +872,7 @@ function iconoSvg(id, extraClass) {
       await iniciarSesion();
       loadRsvps();
       loadConfig();
+      loadMusicaSugerencias();
     } catch (err) {
       tableWrap.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
       summaryEl.innerHTML = '';
@@ -921,6 +947,58 @@ function iconoSvg(id, extraClass) {
     const link = document.createElement('a');
     link.href = url;
     link.download = 'rsvps.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  /* ==================================================================
+     PANEL: SUGERENCIAS MUSICALES
+     ================================================================== */
+  async function loadMusicaSugerencias(){
+    musicaTableWrap.innerHTML = '<p class="empty">Cargando…</p>';
+    try {
+      const res = await fetch('/api/musica');
+      if (res.status === 401){
+        musicaTableWrap.innerHTML = '<p class="error">Clave incorrecta.</p>';
+        return;
+      }
+      const data = await res.json();
+      renderMusicaTable(data.sugerencias);
+    } catch (err){
+      musicaTableWrap.innerHTML = '<p class="error">No se pudo conectar con el servidor.</p>';
+    }
+  }
+
+  function renderMusicaTable(list){
+    if (!list || !list.length){
+      musicaTableWrap.innerHTML = '<p class="empty">Aún no hay sugerencias.</p>';
+      return;
+    }
+    const rows = list.map(r => `
+      <tr>
+        <td>${escapeHtml(r.cancion)}</td>
+        <td>${escapeHtml(r.artista || '—')}</td>
+        <td>${fmtDate(r.creado)}</td>
+      </tr>
+    `).join('');
+
+    musicaTableWrap.innerHTML = `
+      <table>
+        <thead><tr><th>Canción</th><th>Artista</th><th>Fecha</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  loadMusicaBtn.addEventListener('click', loadMusicaSugerencias);
+  exportMusicaBtn.addEventListener('click', async () => {
+    const res = await fetch('/api/musica-export');
+    if (res.status === 401) { alert('Ingresa la clave para acceder al panel.'); return; }
+    if (!res.ok) { alert('No se pudo exportar el archivo.'); return; }
+    const url = URL.createObjectURL(await res.blob());
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sugerencias-musicales.csv';
     link.click();
     URL.revokeObjectURL(url);
   });
@@ -1036,6 +1114,20 @@ function iconoSvg(id, extraClass) {
     mapaDebounce = setTimeout(updateMapaPreview, 600);
   });
 
+  const streetViewPreview = document.getElementById('streetViewPreview');
+  const cfgStreetView = document.getElementById('cfgStreetView');
+
+  function updateStreetViewPreview(){
+    const url = cfgStreetView.value.trim();
+    streetViewPreview.src = url || 'about:blank';
+  }
+
+  let streetViewDebounce;
+  cfgStreetView.addEventListener('input', () => {
+    clearTimeout(streetViewDebounce);
+    streetViewDebounce = setTimeout(updateStreetViewPreview, 600);
+  });
+
   document.getElementById('genMapaBtn').addEventListener('click', () => {
     const lugar = document.getElementById('cfgLugar').value.trim();
     const direccion = document.getElementById('cfgDireccion').value.trim();
@@ -1128,7 +1220,9 @@ function iconoSvg(id, extraClass) {
     document.getElementById('cfgHoraLugar').value = u.hora || '';
     document.getElementById('cfgMapaEmbed').value = u.mapaEmbedUrl || '';
     document.getElementById('cfgMapaLink').value = u.mapaLink || '';
+    document.getElementById('cfgStreetView').value = u.streetViewUrl || '';
     updateMapaPreview();
+    updateStreetViewPreview();
 
     galeriaRows.innerHTML = '';
     (config.galeria || []).forEach(addGaleriaRow);
@@ -1212,6 +1306,7 @@ function iconoSvg(id, extraClass) {
         direccion: document.getElementById('cfgDireccion').value.trim(),
         hora: document.getElementById('cfgHoraLugar').value.trim(),
         mapaEmbedUrl: document.getElementById('cfgMapaEmbed').value.trim(),
+        streetViewUrl: document.getElementById('cfgStreetView').value.trim(),
         mapaLink: document.getElementById('cfgMapaLink').value.trim()
       },
       galeria: [...galeriaRows.querySelectorAll('.gal-url')].map(inp => inp.value.trim()).filter(Boolean)
@@ -1253,6 +1348,7 @@ function iconoSvg(id, extraClass) {
         if (saved.galeria && saved.galeria[i] !== url && !saved.galeria.includes(url)) discrepancias.push(`la foto #${i + 1} de la galería`);
       });
       if (sent.ubicacion?.mapaEmbedUrl && saved.ubicacion?.mapaEmbedUrl !== sent.ubicacion.mapaEmbedUrl) discrepancias.push('el mapa incrustado');
+      if (sent.ubicacion?.streetViewUrl && saved.ubicacion?.streetViewUrl !== sent.ubicacion.streetViewUrl) discrepancias.push('el Street View incrustado');
 
       if (discrepancias.length){
         configStatus.textContent = `Guardado, pero el servidor no reconoció y reemplazó por el valor anterior: ${discrepancias.join(', ')}. Revisa que la URL sea válida.`;

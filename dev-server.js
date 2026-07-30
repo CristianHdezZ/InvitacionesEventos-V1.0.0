@@ -18,6 +18,8 @@ const rsvpHandler = require('./api/rsvp');
 const rsvpExportHandler = require('./api/rsvp-export');
 const configHandler = require('./api/config');
 const adminSessionHandler = require('./api/admin-session');
+const musicaHandler = require('./api/musica');
+const musicaExportHandler = require('./api/musica-export');
 
 const app = express();
 app.use(express.json());
@@ -34,6 +36,8 @@ app.all('/api/rsvp', (req, res) => rsvpHandler(req, res));
 app.all('/api/rsvp-export', (req, res) => rsvpExportHandler(req, res));
 app.all('/api/config', (req, res) => configHandler(req, res));
 app.all('/api/admin-session', (req, res) => adminSessionHandler(req, res));
+app.all('/api/musica', (req, res) => musicaHandler(req, res));
+app.all('/api/musica-export', (req, res) => musicaExportHandler(req, res));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

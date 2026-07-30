@@ -120,7 +120,8 @@ const DEFAULT_CONFIG = {
     nombreLugar: 'Salón de Eventos Imperial Eventos Deluxe',
     direccion: 'Cr 40ªª Nº 48ª -12 Sector UCO Rionegro- Antioquia',
     hora: '7:00 p.m.',
-    mapaEmbedUrl: 'https://www.google.com/maps/embed?pb=!4v1784564524946!6m8!1m7!1sCOvTRbTPuU5mPLvsMMZbUw!2m2!1d6.188724376340286!2d-75.36359884954642!3f325.46288285307287!4f8.27229985678568!5f0.7820865974627469',
+    mapaEmbedUrl: 'https://www.google.com/maps?q=6.1887244,-75.3635988&z=17&output=embed',
+    streetViewUrl: 'https://www.google.com/maps/embed?pb=!4v1784564524946!6m8!1m7!1sCOvTRbTPuU5mPLvsMMZbUw!2m2!1d6.188724376340286!2d-75.36359884954642!3f325.46288285307287!4f8.27229985678568!5f0.7820865974627469',
     mapaLink: 'https://www.google.com/maps/place/Imperial+Eventos+Deluxe/@6.1887244,-75.3635988'
   },
   galeria: [
@@ -266,11 +267,26 @@ function sanitizeConfig(body) {
     ? b.galeria.slice(0, 24).map((url) => sanitizeUrl(url, null)).filter(Boolean)
     : d.galeria;
 
+  // Migración — configuraciones guardadas antes de separar el mapa estático
+  // del Street View usaban un único campo (mapaEmbedUrl) que a veces
+  // contenía en realidad un embed de Street View (identificable por los
+  // parámetros de orientación !3f/!4f de su URL). Si detectamos ese caso y
+  // todavía no hay streetViewUrl guardado, migramos el valor al campo nuevo
+  // en vez de perderlo.
+  const esEmbedStreetView = (url) => typeof url === 'string' && /!3f[\d.]+.*!4f[\d.]+/.test(url);
+  let mapaEmbedEntrante = b?.ubicacion?.mapaEmbedUrl;
+  let streetViewEntrante = b?.ubicacion?.streetViewUrl;
+  if (!streetViewEntrante && esEmbedStreetView(mapaEmbedEntrante)) {
+    streetViewEntrante = mapaEmbedEntrante;
+    mapaEmbedEntrante = undefined;
+  }
+
   const ubicacion = {
     nombreLugar: sanitizeText(b?.ubicacion?.nombreLugar, 150, d.ubicacion.nombreLugar),
     direccion: sanitizeText(b?.ubicacion?.direccion, 250, d.ubicacion.direccion),
     hora: sanitizeText(b?.ubicacion?.hora, 30, d.ubicacion.hora),
-    mapaEmbedUrl: sanitizeUrl(b?.ubicacion?.mapaEmbedUrl, d.ubicacion.mapaEmbedUrl),
+    mapaEmbedUrl: sanitizeUrl(mapaEmbedEntrante, d.ubicacion.mapaEmbedUrl),
+    streetViewUrl: sanitizeUrl(streetViewEntrante, d.ubicacion.streetViewUrl),
     mapaLink: sanitizeUrl(b?.ubicacion?.mapaLink, d.ubicacion.mapaLink)
   };
 

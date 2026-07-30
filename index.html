@@ -163,6 +163,7 @@
   <a href="#regalos" data-label="Regalos"></a>
   <a href="#detalles" data-label="Ubicación"></a>
   <a href="#galeria" data-label="Galería"></a>
+  <a href="#musica" data-label="Música"></a>
   <a href="#rsvp" data-label="Confirmar"></a>
 </nav>
 
@@ -351,18 +352,34 @@
     <div class="section__inner" data-aos="fade-up">
       <span class="section__eyebrow">Ubicación</span>
       <h2 class="section__title">Dónde y cuándo</h2>
+    </div>
 
-      <div class="detalles__grid detalles__grid--single">
-        <article class="detalle-card">
-          <h3>Recepción</h3>
-          <p class="detalle-card__hora">7:00 p.m.</p>
-          <p>Salón de Eventos Imperial Eventos Deluxe<br>Cr 40ªª Nº 48ª -12 Sector UCO Rionegro- Antioquia</p>
+    <div class="ubicacion" data-aos="fade-up">
+      <div class="ubicacion__maps">
+        <div>
+          <p class="detalle-card__maplabel">Mapa</p>
           <div class="mapa-wrap">
-            <iframe src="https://www.google.com/maps/embed?pb=!4v1784564524946!6m8!1m7!1sCOvTRbTPuU5mPLvsMMZbUw!2m2!1d6.188724376340286!2d-75.36359884954642!3f325.46288285307287!4f8.27229985678568!5f0.7820865974627469" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <iframe id="mapaEstaticoFrame" src="https://www.google.com/maps?q=6.1887244,-75.3635988&z=17&output=embed" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           </div>
-          <a class="btn-link" href="https://www.google.com/maps/place/Imperial+Eventos+Deluxe/@6.1887244,-75.3635988,3a,75y,325.46h,98.27t/data=!3m7!1e1!3m5!1sCOvTRbTPuU5mPLvsMMZbUw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-8.27229985678568%26panoid%3DCOvTRbTPuU5mPLvsMMZbUw%26yaw%3D325.46288285307287!7i16384!8i8192!4m10!1m2!2m1!1simperial+eventos+deluxe+rionegro!3m6!1s0x8e469fbdc4b23857:0x35bf617a5ab5388d!8m2!3d6.1887534!4d-75.363865!15sCiBpbXBlcmlhbCBldmVudG9zIGRlbHV4ZSByaW9uZWdyb5IBFmZ1bmN0aW9uX3Jvb21fZmFjaWxpdHngAQA!16s%2Fg%2F11xs993pyw?entry=ttu&g_ep=EgoyMDI2MDcxNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 C8 2 5 5 5 9 C5 14 12 22 12 22 C12 22 19 14 19 9 C19 5 16 2 12 2 Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>Cómo llegar</a>
-        </article>
+        </div>
+        <div>
+          <p class="detalle-card__maplabel">Street View</p>
+          <div class="mapa-wrap">
+            <iframe id="mapaStreetViewFrame" src="https://www.google.com/maps/embed?pb=!4v1784564524946!6m8!1m7!1sCOvTRbTPuU5mPLvsMMZbUw!2m2!1d6.188724376340286!2d-75.36359884954642!3f325.46288285307287!4f8.27229985678568!5f0.7820865974627469" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        </div>
       </div>
+      <article class="detalle-card">
+        <span class="ubicacion__icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 C8 2 5 5 5 9 C5 14 12 22 12 22 C12 22 19 14 19 9 C19 5 16 2 12 2 Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+        </span>
+        <p class="ubicacion__eyebrow">Recepción</p>
+        <h3>Salón de Eventos Imperial Eventos Deluxe</h3>
+        <span class="ubicacion__divider" aria-hidden="true"></span>
+        <p class="ubicacion__direccion">Salón de Eventos Imperial Eventos Deluxe<br>Cr 40ªª Nº 48ª -12 Sector UCO Rionegro- Antioquia</p>
+        <p class="detalle-card__hora">7:00 p.m.</p>
+        <a class="btn-link" href="https://www.google.com/maps/place/Imperial+Eventos+Deluxe/@6.1887244,-75.3635988,3a,75y,325.46h,98.27t/data=!3m7!1e1!3m5!1sCOvTRbTPuU5mPLvsMMZbUw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-8.27229985678568%26panoid%3DCOvTRbTPuU5mPLvsMMZbUw%26yaw%3D325.46288285307287!7i16384!8i8192!4m10!1m2!2m1!1simperial+eventos+deluxe+rionegro!3m6!1s0x8e469fbdc4b23857:0x35bf617a5ab5388d!8m2!3d6.1887534!4d-75.363865!15sCiBpbXBlcmlhbCBldmVudG9zIGRlbHV4ZSByaW9uZWdyb5IBFmZ1bmN0aW9uX3Jvb21fZmFjaWxpdHngAQA!16s%2Fg%2F11xs993pyw?entry=ttu&g_ep=EgoyMDI2MDcxNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Abrir mapa →</a>
+      </article>
     </div>
   </section>
 
@@ -402,6 +419,37 @@
         </a>
         <a class="album-regalo__button" href="https://photos.app.goo.gl/DRKpJfLgSRFCrxTL7" target="_blank" rel="noopener noreferrer">Subir fotos</a>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUGERENCIA MUSICAL ===================== -->
+  <section id="musica" class="section musica">
+    <div class="section__inner" data-aos="fade-up">
+      <span class="section__eyebrow">Sugerencia Musical</span>
+      <h2 class="section__title">Sugiérenos una canción que no puede faltar en la fiesta</h2>
+    </div>
+
+    <div class="musica__inner" data-aos="fade-up">
+      <div class="musica__player">
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/7gYZDWwNadfs2iKo8O1nBi?utm_source=generator&si=9433293f27444f29" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+
+      <form id="musicaForm" class="rsvp-form musica-form" data-endpoint="/api/musica">
+        <div class="field">
+          <label for="cancionTitulo">Canción</label>
+          <input type="text" id="cancionTitulo" name="cancion" required autocomplete="off" placeholder="Ej. Perfect">
+        </div>
+        <div class="field">
+          <label for="cancionArtista">Artista (opcional)</label>
+          <input type="text" id="cancionArtista" name="artista" autocomplete="off" placeholder="Ej. Ed Sheeran">
+        </div>
+
+        <!-- Honeypot anti-spam: campo oculto que un humano nunca llena -->
+        <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <button type="submit" class="btn-primary" id="musicaSubmit">Enviar sugerencia</button>
+        <p class="rsvp-form__status" id="musicaStatus" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
