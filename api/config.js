@@ -68,6 +68,10 @@ const DEFAULT_CONFIG = {
   fotoPrincipal: 'assets/gallery/image01.jpeg',
   lottieGate: 'assets/flor.json',
   musica: 'assets/music/LaPrincesadePapa.mp3',
+  ilustracionQuinceanera: {
+    tipo: 'svg',
+    imagenUrl: ''
+  },
   colores: {
     blush: '#FBEAEE',
     blush2: '#F6D8DF',
@@ -310,6 +314,10 @@ function sanitizeConfig(body) {
     fotoPrincipal: sanitizeUrl(b.fotoPrincipal, d.fotoPrincipal),
     lottieGate: sanitizeUrl(b.lottieGate, d.lottieGate),
     musica: sanitizeUrl(b.musica, d.musica),
+    ilustracionQuinceanera: {
+      tipo: b?.ilustracionQuinceanera?.tipo === 'imagen' ? 'imagen' : 'svg',
+      imagenUrl: sanitizeUrl(b?.ilustracionQuinceanera?.imagenUrl, d.ilustracionQuinceanera.imagenUrl)
+    },
     colores,
     tipografia,
     estilos,

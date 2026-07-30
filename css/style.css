@@ -288,6 +288,7 @@ img{ max-width:100%; display:block; }
   position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
   z-index:1; opacity:.95;
 }
+.gate__dress-img, .carta__dress-img{ object-fit:contain; display:block; }
 @media (max-width:600px){
   .carta{ padding-bottom:max(240px, 26vh); }
   .carta__dress{ width:min(150px, 40vw); }

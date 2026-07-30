@@ -359,6 +359,25 @@ function renderFotoPrincipal(url, nombre, apellido) {
   if (nombre) img.alt = 'Retrato de ' + nombre + (apellido ? ' ' + apellido : '');
 }
 
+function renderIlustracionQuinceanera(cfg) {
+  const pares = [
+    { svg: document.getElementById('gateDressSvg'), img: document.getElementById('gateDressImg') },
+    { svg: document.getElementById('cartaDressSvg'), img: document.getElementById('cartaDressImg') }
+  ];
+  const usarImagen = cfg?.tipo === 'imagen' && cfg?.imagenUrl;
+  pares.forEach(({ svg, img }) => {
+    if (!svg || !img) return;
+    if (usarImagen) {
+      img.src = cfg.imagenUrl;
+      img.hidden = false;
+      svg.style.display = 'none';
+    } else {
+      img.hidden = true;
+      svg.style.display = '';
+    }
+  });
+}
+
 function renderMusica(url) {
   const audio = document.getElementById('bgMusic');
   if (!audio || !url) return;
@@ -449,6 +468,7 @@ async function applyConfig() {
     renderFotoPrincipal(config.fotoPrincipal, config.nombre, config.apellido);
     renderLottieGate(config.lottieGate);
     renderMusica(config.musica);
+    renderIlustracionQuinceanera(config.ilustracionQuinceanera);
     renderFecha(config.fechaEvento);
     applyColors(config.colores);
     applyTipografia(config.tipografia, config.estilos);

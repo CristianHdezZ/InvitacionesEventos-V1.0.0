@@ -105,10 +105,10 @@
     </button>
   </div>
 
-  <svg class="gate__dress" viewBox="0 -10 220 270" aria-hidden="true">
+  <svg class="gate__dress" id="gateDressSvg" viewBox="0 -10 220 270" aria-hidden="true">
     <ellipse cx="110" cy="250" rx="95" ry="10" class="dress__shadow"/>
-    <path d="M100,6 C90,10 83,22 85,38 C86,48 90,56 95,60 C97,50 96,36 99,24 C100,16 101,10 100,6Z" class="dress__hair"/>
-    <path d="M120,6 C130,10 137,22 135,38 C134,48 130,56 125,60 C123,50 124,36 121,24 C120,16 119,10 120,6Z" class="dress__hair"/>
+    <path d="M100,6 C88,10 78,24 80,42 C82,58 76,80 82,100 C87,84 92,66 89,50 C91,42 93,32 96,24 C98,17 99,11 100,6Z" class="dress__hair"/>
+    <path d="M120,6 C132,10 142,24 140,42 C138,58 144,80 138,100 C133,84 128,66 131,50 C129,42 127,32 124,24 C122,17 121,11 120,6Z" class="dress__hair"/>
     <path d="M85,34 C80,40 78,48 80,56 C81,60 84,62 86,60 C85,54 84,46 86,38 C87,35 87,33 85,34Z" class="dress__arm"/>
     <path d="M135,34 C140,40 142,48 140,56 C139,60 136,62 134,60 C135,54 136,46 134,38 C133,35 133,33 135,34Z" class="dress__arm"/>
     <path d="M92,20 C86,24 84,30 88,34 C94,30 100,26 104,22 Z" class="dress__sleeve"/>
@@ -119,11 +119,13 @@
     <circle cx="110" cy="-2" r="1.6" class="dress__gem--accent"/>
     <circle cx="104" cy="1" r="1" class="dress__gem"/>
     <circle cx="116" cy="1" r="1" class="dress__gem"/>
+    <circle cx="107" cy="-2" r="0.9" class="dress__gem"/>
+    <circle cx="113" cy="-2" r="0.9" class="dress__gem"/>
     <path d="M110,12 C118,12 123,20 121,30 L113,66 C112,68 108,68 107,66 L99,30 C97,20 102,12 110,12 Z" class="dress__body"/>
     <path d="M104,24 L116,32 M116,24 L104,32 M103,34 L117,42 M117,34 L103,42 M102,44 L118,52 M118,44 L102,52" class="dress__lace"/>
-    <path d="M96,66 L108,72 L96,78 Z" class="dress__bow"/>
-    <path d="M124,66 L112,72 L124,78 Z" class="dress__bow"/>
-    <circle cx="110" cy="72" r="3" class="dress__bow"/>
+    <path d="M87,63 L109,74 L87,85 Z" class="dress__bow"/>
+    <path d="M133,63 L111,74 L133,85 Z" class="dress__bow"/>
+    <circle cx="110" cy="74" r="4.5" class="dress__bow"/>
     <path d="M99,66 C90,90 55,150 30,232 C60,248 160,248 190,232 C165,150 130,90 121,66 C118,70 102,70 99,66 Z" class="dress__body"/>
     <path d="M110,80 C104,130 100,185 96,230" class="dress__pleat"/>
     <path d="M110,80 C116,130 122,185 128,230" class="dress__pleat"/>
@@ -131,6 +133,9 @@
     <path d="M114,78 C132,120 148,175 160,222" class="dress__pleat"/>
     <path d="M102,76 C76,115 52,165 38,215" class="dress__pleat"/>
     <path d="M118,76 C144,115 168,165 182,215" class="dress__pleat"/>
+    <path d="M58,145 Q80,155 110,147 Q140,155 162,145" class="dress__ruffle" style="opacity:.45"/>
+    <path d="M50,170 Q80,182 110,172 Q140,182 170,170" class="dress__ruffle" style="opacity:.55"/>
+    <path d="M44,195 Q80,207 110,197 Q140,207 176,195" class="dress__ruffle" style="opacity:.65"/>
     <path d="M42,205 C80,218 140,218 178,205" class="dress__ruffle"/>
     <path d="M35,220 C80,234 140,234 185,220" class="dress__ruffle"/>
     <circle cx="107" cy="30" r="0.7" class="dress__gem"/>
@@ -150,6 +155,7 @@
     <g class="rose" transform="translate(35,225) scale(0.55)"><path d="M0,-28 C14,-28 24,-16 22,-2 C20,10 8,18 -4,16 C-18,14 -26,2 -22,-12 C-19,-22 -10,-28 0,-28 Z" class="rose__c1"/><path d="M-2,-18 C10,-20 18,-10 15,2 C12,12 0,16 -9,11 C-17,6 -18,-6 -12,-13 C-9,-16 -6,-18 -2,-18 Z" class="rose__c2"/><path d="M2,-10 C9,-9 12,-2 9,4 C6,9 -1,10 -5,5 C-8,1 -6,-5 -1,-7" class="rose__spiral"/><ellipse cx="-8" cy="-10" rx="5" ry="3" class="rose__c3" transform="rotate(-30 -8 -10)"/></g>
     <g class="rose" transform="translate(185,222) scale(0.6)"><path d="M0,-28 C14,-28 24,-16 22,-2 C20,10 8,18 -4,16 C-18,14 -26,2 -22,-12 C-19,-22 -10,-28 0,-28 Z" class="rose__c1"/><path d="M-2,-18 C10,-20 18,-10 15,2 C12,12 0,16 -9,11 C-17,6 -18,-6 -12,-13 C-9,-16 -6,-18 -2,-18 Z" class="rose__c2"/><path d="M2,-10 C9,-9 12,-2 9,4 C6,9 -1,10 -5,5 C-8,1 -6,-5 -1,-7" class="rose__spiral"/><ellipse cx="-8" cy="-10" rx="5" ry="3" class="rose__c3" transform="rotate(-30 -8 -10)"/></g>
   </svg>
+  <img class="gate__dress gate__dress-img" id="gateDressImg" src="" alt="" hidden>
 
   <svg class="garland garland--bottom" viewBox="0 0 500 140" aria-hidden="true">
     <g class="rose" transform="translate(70,110) scale(0.8)"><path d="M0,-28 C14,-28 24,-16 22,-2 C20,10 8,18 -4,16 C-18,14 -26,2 -22,-12 C-19,-22 -10,-28 0,-28 Z" class="rose__c1"/><path d="M-2,-18 C10,-20 18,-10 15,2 C12,12 0,16 -9,11 C-17,6 -18,-6 -12,-13 C-9,-16 -6,-18 -2,-18 Z" class="rose__c2"/><path d="M2,-10 C9,-9 12,-2 9,4 C6,9 -1,10 -5,5 C-8,1 -6,-5 -1,-7" class="rose__spiral"/><ellipse cx="-8" cy="-10" rx="5" ry="3" class="rose__c3" transform="rotate(-30 -8 -10)"/></g>
@@ -255,10 +261,10 @@
       <p class="carta__firma">Con cariño, Linda</p>
     </div>
 
-    <svg class="carta__dress" viewBox="0 -10 220 270" aria-hidden="true">
+    <svg class="carta__dress" id="cartaDressSvg" viewBox="0 -10 220 270" aria-hidden="true">
       <ellipse cx="110" cy="250" rx="90" ry="9" class="dress__shadow"/>
-      <path d="M100,6 C90,10 83,22 85,38 C86,48 90,56 95,60 C97,50 96,36 99,24 C100,16 101,10 100,6Z" class="dress__hair"/>
-      <path d="M120,6 C130,10 137,22 135,38 C134,48 130,56 125,60 C123,50 124,36 121,24 C120,16 119,10 120,6Z" class="dress__hair"/>
+      <path d="M100,6 C88,10 78,24 80,42 C82,58 76,80 82,100 C87,84 92,66 89,50 C91,42 93,32 96,24 C98,17 99,11 100,6Z" class="dress__hair"/>
+      <path d="M120,6 C132,10 142,24 140,42 C138,58 144,80 138,100 C133,84 128,66 131,50 C129,42 127,32 124,24 C122,17 121,11 120,6Z" class="dress__hair"/>
       <path d="M85,34 C80,40 78,48 80,56 C81,60 84,62 86,60 C85,54 84,46 86,38 C87,35 87,33 85,34Z" class="dress__arm"/>
       <path d="M135,34 C140,40 142,48 140,56 C139,60 136,62 134,60 C135,54 136,46 134,38 C133,35 133,33 135,34Z" class="dress__arm"/>
       <path d="M92,20 C86,24 84,30 88,34 C94,30 100,26 104,22 Z" class="dress__sleeve"/>
@@ -269,11 +275,13 @@
       <circle cx="110" cy="-2" r="1.6" class="dress__gem--accent"/>
       <circle cx="104" cy="1" r="1" class="dress__gem"/>
       <circle cx="116" cy="1" r="1" class="dress__gem"/>
+      <circle cx="107" cy="-2" r="0.9" class="dress__gem"/>
+      <circle cx="113" cy="-2" r="0.9" class="dress__gem"/>
       <path d="M110,12 C118,12 123,20 121,30 L113,66 C112,68 108,68 107,66 L99,30 C97,20 102,12 110,12 Z" class="dress__body"/>
       <path d="M104,24 L116,32 M116,24 L104,32 M103,34 L117,42 M117,34 L103,42 M102,44 L118,52 M118,44 L102,52" class="dress__lace"/>
-      <path d="M96,66 L108,72 L96,78 Z" class="dress__bow"/>
-      <path d="M124,66 L112,72 L124,78 Z" class="dress__bow"/>
-      <circle cx="110" cy="72" r="3" class="dress__bow"/>
+      <path d="M87,63 L109,74 L87,85 Z" class="dress__bow"/>
+      <path d="M133,63 L111,74 L133,85 Z" class="dress__bow"/>
+      <circle cx="110" cy="74" r="4.5" class="dress__bow"/>
       <path d="M99,66 C90,90 55,150 30,232 C60,248 160,248 190,232 C165,150 130,90 121,66 C118,70 102,70 99,66 Z" class="dress__body"/>
       <path d="M110,80 C104,130 100,185 96,230" class="dress__pleat"/>
       <path d="M110,80 C116,130 122,185 128,230" class="dress__pleat"/>
@@ -281,6 +289,9 @@
       <path d="M114,78 C132,120 148,175 160,222" class="dress__pleat"/>
       <path d="M102,76 C76,115 52,165 38,215" class="dress__pleat"/>
       <path d="M118,76 C144,115 168,165 182,215" class="dress__pleat"/>
+      <path d="M58,145 Q80,155 110,147 Q140,155 162,145" class="dress__ruffle" style="opacity:.45"/>
+      <path d="M50,170 Q80,182 110,172 Q140,182 170,170" class="dress__ruffle" style="opacity:.55"/>
+      <path d="M44,195 Q80,207 110,197 Q140,207 176,195" class="dress__ruffle" style="opacity:.65"/>
       <path d="M42,205 C80,218 140,218 178,205" class="dress__ruffle"/>
       <path d="M35,220 C80,234 140,234 185,220" class="dress__ruffle"/>
       <circle cx="107" cy="30" r="0.7" class="dress__gem"/>
@@ -303,6 +314,7 @@
       <ellipse cx="14" cy="235" rx="10" ry="4" class="leaf" transform="rotate(25 14 235)"/>
       <ellipse cx="208" cy="233" rx="10" ry="4" class="leaf" transform="rotate(-20 208 233)"/>
     </svg>
+    <img class="carta__dress carta__dress-img" id="cartaDressImg" src="" alt="" hidden>
 
     <svg class="carta__garland carta__garland--bottom" viewBox="0 0 500 100" aria-hidden="true">
       <g class="rose" transform="translate(90,70) scale(0.6)"><path d="M0,-28 C14,-28 24,-16 22,-2 C20,10 8,18 -4,16 C-18,14 -26,2 -22,-12 C-19,-22 -10,-28 0,-28 Z" class="rose__c1"/><path d="M-2,-18 C10,-20 18,-10 15,2 C12,12 0,16 -9,11 C-17,6 -18,-6 -12,-13 C-9,-16 -6,-18 -2,-18 Z" class="rose__c2"/><path d="M2,-10 C9,-9 12,-2 9,4 C6,9 -1,10 -5,5 C-8,1 -6,-5 -1,-7" class="rose__spiral"/><ellipse cx="-8" cy="-10" rx="5" ry="3" class="rose__c3" transform="rotate(-30 -8 -10)"/></g>
