@@ -46,6 +46,7 @@ function migrarIcono(valor) {
 // Fuentes permitidas — lista cerrada (no texto libre) para no tener que
 // cargar URLs de Google Fonts arbitrarias ni romper el diseño con una
 // fuente que no combine.
+const ILUSTRACION_TIPOS_VALIDOS = ['svg', 'svg-detallado', 'imagen'];
 const FUENTES_DISPLAY = ['Cormorant Garamond', 'Playfair Display', 'EB Garamond', 'Marcellus'];
 const FUENTES_SCRIPT = ['Alex Brush', 'Great Vibes', 'Parisienne', 'Dancing Script', 'Playball'];
 const FUENTES_BODY = ['Jost', 'Poppins', 'Montserrat', 'Lato'];
@@ -70,7 +71,8 @@ const DEFAULT_CONFIG = {
   musica: 'assets/music/LaPrincesadePapa.mp3',
   ilustracionQuinceanera: {
     tipo: 'svg',
-    imagenUrl: ''
+    imagenUrl: '',
+    escala: 100
   },
   colores: {
     blush: '#FBEAEE',
@@ -315,8 +317,9 @@ function sanitizeConfig(body) {
     lottieGate: sanitizeUrl(b.lottieGate, d.lottieGate),
     musica: sanitizeUrl(b.musica, d.musica),
     ilustracionQuinceanera: {
-      tipo: b?.ilustracionQuinceanera?.tipo === 'imagen' ? 'imagen' : 'svg',
-      imagenUrl: sanitizeUrl(b?.ilustracionQuinceanera?.imagenUrl, d.ilustracionQuinceanera.imagenUrl)
+      tipo: sanitizeChoice(b?.ilustracionQuinceanera?.tipo, ILUSTRACION_TIPOS_VALIDOS, d.ilustracionQuinceanera.tipo),
+      imagenUrl: sanitizeUrl(b?.ilustracionQuinceanera?.imagenUrl, d.ilustracionQuinceanera.imagenUrl),
+      escala: sanitizeEntero(b?.ilustracionQuinceanera?.escala, 30, 250, d.ilustracionQuinceanera.escala)
     },
     colores,
     tipografia,

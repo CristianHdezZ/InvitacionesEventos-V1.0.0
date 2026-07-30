@@ -235,6 +235,11 @@
         Dibujo animado (SVG) — se puede recolorear desde este panel
       </label>
       <label class="switch-label" style="font-weight:normal;">
+        <input type="radio" name="ilustracionTipo" id="ilustracionTipoSvgDetallado" value="svg-detallado">
+        Ilustración detallada (nueva)
+        <img src="assets/gallery/quinceanera-detallada.svg" alt="" style="width:36px; height:36px; object-fit:cover; object-position:top; border-radius:4px; margin-left:6px; vertical-align:middle; border:1px solid var(--blush-2);">
+      </label>
+      <label class="switch-label" style="font-weight:normal;">
         <input type="radio" name="ilustracionTipo" id="ilustracionTipoImagen" value="imagen">
         Imagen personalizada
       </label>
@@ -244,6 +249,14 @@
       <input type="text" id="cfgIlustracionUrl" placeholder="assets/gallery/quinceañera.png o https://...">
       <p class="hint">Usa una imagen con fondo transparente (PNG) para que se vea bien sobre el fondo de la invitación. Ruta propia o enlace público, igual que la foto principal.</p>
       <img id="ilustracionPreview" alt="" style="width:100px; height:auto; display:block; margin-top:8px;">
+    </div>
+    <div class="field">
+      <label for="ilustracionEscala">Tamaño de la ilustración</label>
+      <div class="rango-field">
+        <input type="range" id="ilustracionEscala" min="30" max="250" step="5" value="100">
+        <output id="ilustracionEscalaVal">100%</output>
+      </div>
+      <p class="hint">Se aplica a cualquiera de las tres opciones de arriba, en la portada y en la carta.</p>
     </div>
   </div>
 
@@ -881,6 +894,13 @@ function iconoSvg(id, extraClass) {
     rangoApellido.addEventListener('input', pintarAp);
     pintarAp();
   }
+  const rangoIlustracionEscala = document.getElementById('ilustracionEscala');
+  const rangoIlustracionEscalaVal = document.getElementById('ilustracionEscalaVal');
+  if (rangoIlustracionEscala && rangoIlustracionEscalaVal) {
+    const pintarEscala = () => { rangoIlustracionEscalaVal.textContent = rangoIlustracionEscala.value + '%'; };
+    rangoIlustracionEscala.addEventListener('input', pintarEscala);
+    pintarEscala();
+  }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1138,8 +1158,9 @@ function iconoSvg(id, extraClass) {
     const esImagen = document.getElementById('ilustracionTipoImagen').checked;
     ilustracionImagenField.style.display = esImagen ? '' : 'none';
   }
-  document.getElementById('ilustracionTipoSvg').addEventListener('change', actualizarIlustracionCampos);
-  document.getElementById('ilustracionTipoImagen').addEventListener('change', actualizarIlustracionCampos);
+  document.querySelectorAll('input[name="ilustracionTipo"]').forEach((input) => {
+    input.addEventListener('change', actualizarIlustracionCampos);
+  });
 
   let ilustracionDebounce;
   cfgIlustracionUrl.addEventListener('input', (e) => {
@@ -1211,12 +1232,15 @@ function iconoSvg(id, extraClass) {
     document.getElementById('cfgMusica').value = config.musica || '';
 
     const ilustracion = config.ilustracionQuinceanera || {};
-    const ilustracionEsImagen = ilustracion.tipo === 'imagen';
-    document.getElementById('ilustracionTipoSvg').checked = !ilustracionEsImagen;
-    document.getElementById('ilustracionTipoImagen').checked = ilustracionEsImagen;
+    const ilustracionTipo = ['svg', 'svg-detallado', 'imagen'].includes(ilustracion.tipo) ? ilustracion.tipo : 'svg';
+    const ilustracionInput = document.querySelector(`input[name="ilustracionTipo"][value="${ilustracionTipo}"]`);
+    if (ilustracionInput) ilustracionInput.checked = true;
     cfgIlustracionUrl.value = ilustracion.imagenUrl || '';
     ilustracionPreview.src = ilustracion.imagenUrl || '';
     actualizarIlustracionCampos();
+    const escalaIlustracion = (typeof ilustracion.escala === 'number') ? ilustracion.escala : 100;
+    rangoIlustracionEscala.value = escalaIlustracion;
+    rangoIlustracionEscalaVal.textContent = escalaIlustracion + '%';
 
     const c = config.colores || {};
     document.getElementById('colBlush').value = c.blush || '#FBEAEE';
@@ -1310,8 +1334,9 @@ function iconoSvg(id, extraClass) {
       lottieGate: document.getElementById('cfgLottie').value.trim(),
       musica: document.getElementById('cfgMusica').value.trim(),
       ilustracionQuinceanera: {
-        tipo: document.getElementById('ilustracionTipoImagen').checked ? 'imagen' : 'svg',
-        imagenUrl: cfgIlustracionUrl.value.trim()
+        tipo: document.querySelector('input[name="ilustracionTipo"]:checked')?.value || 'svg',
+        imagenUrl: cfgIlustracionUrl.value.trim(),
+        escala: parseInt(rangoIlustracionEscala.value, 10)
       },
       fraseInvitacion: document.getElementById('cfgFraseInvitacion').value.trim(),
       fraseFecha: document.getElementById('cfgFraseFecha').value.trim(),

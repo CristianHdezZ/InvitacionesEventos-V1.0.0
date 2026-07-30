@@ -359,16 +359,24 @@ function renderFotoPrincipal(url, nombre, apellido) {
   if (nombre) img.alt = 'Retrato de ' + nombre + (apellido ? ' ' + apellido : '');
 }
 
+const ILUSTRACION_DETALLADA_URL = 'assets/gallery/quinceanera-detallada.svg';
+
 function renderIlustracionQuinceanera(cfg) {
+  const escala = Number(cfg?.escala);
+  document.documentElement.style.setProperty('--ilustracion-escala', Number.isFinite(escala) && escala > 0 ? escala / 100 : 1);
+
   const pares = [
     { svg: document.getElementById('gateDressSvg'), img: document.getElementById('gateDressImg') },
     { svg: document.getElementById('cartaDressSvg'), img: document.getElementById('cartaDressImg') }
   ];
-  const usarImagen = cfg?.tipo === 'imagen' && cfg?.imagenUrl;
+  let src = null;
+  if (cfg?.tipo === 'imagen' && cfg?.imagenUrl) src = cfg.imagenUrl;
+  else if (cfg?.tipo === 'svg-detallado') src = ILUSTRACION_DETALLADA_URL;
+
   pares.forEach(({ svg, img }) => {
     if (!svg || !img) return;
-    if (usarImagen) {
-      img.src = cfg.imagenUrl;
+    if (src) {
+      img.src = src;
       img.hidden = false;
       svg.style.display = 'none';
     } else {
