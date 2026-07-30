@@ -917,6 +917,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     musicaPlayerFrame.src = `${musicaPlayerBaseSrc}${separador}_r=${Date.now()}`;
   }
 
+  // También se refresca sola cada cierto tiempo mientras la pestaña esté
+  // visible, para que cualquier visitante vea las canciones que otros van
+  // agregando sin necesidad de enviar algo ni recargar toda la página.
+  if (musicaPlayerFrame) {
+    setInterval(() => {
+      if (document.visibilityState === 'visible') refrescarPlaylist();
+    }, 60000);
+  }
+
   musicaForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
