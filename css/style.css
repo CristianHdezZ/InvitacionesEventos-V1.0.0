@@ -66,7 +66,7 @@ img{ max-width:100%; display:block; }
   background:
     radial-gradient(800px 500px at 50% 0%, var(--blush-2), transparent 60%),
     var(--blush);
-  padding:4vh 6vw;
+  padding:2.5vh 6vw;
   text-align:center;
   transition:opacity .8s var(--ease), visibility .8s;
 }
@@ -83,7 +83,7 @@ img{ max-width:100%; display:block; }
 .garland__vine{ fill:none; stroke:var(--verde); stroke-width:1.2; opacity:.42; }
 .leaf{ fill:var(--verde); opacity:.4; }
 
-.gate__content{ max-width:440px; margin:2vh auto; position:relative; z-index:1; }
+.gate__content{ max-width:440px; margin:1.2vh auto; position:relative; z-index:1; }
 .gate__eyebrow{
   font-size:calc(.72rem * var(--scale-mensajes)); letter-spacing:.2em; text-transform:uppercase;
   color:var(--tinta-suave); margin:0 0 10px;
@@ -97,32 +97,38 @@ img{ max-width:100%; display:block; }
 }
 .gate__xv{
   font-size:.85rem; letter-spacing:.3em; color:var(--oro);
-  margin:8px 0 18px;
+  margin:6px 0 12px;
 }
 .gate__quote{
   font-family:var(--f-display); font-style:italic;
   font-size:calc(1.02rem * var(--scale-mensajes)); color:var(--tinta);
-  max-width:360px; margin:0 auto 22px;
+  max-width:360px; margin:0 auto 14px;
 }
 .gate__envelope{
   position:relative; display:block;
-  width:min(240px, 72vw); aspect-ratio:220/130; padding:0; margin:0 auto;
+  width:min(200px, 60vw); aspect-ratio:220/130; padding:0; margin:0 auto;
   border:0; background:transparent; cursor:pointer;
 }
 .gate__envelope-body{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
 .gate__envelope-paper{ fill:var(--blush); stroke:var(--oro); stroke-width:1.5; transition:fill .35s var(--ease); }
+.gate__envelope-inner{ fill:none; stroke:var(--oro); stroke-width:.6; opacity:.55; }
 .gate__envelope-flap{ fill:none; stroke:var(--oro); stroke-width:1.5; stroke-linejoin:round; }
+.gate__envelope-flap--inner{ stroke-width:.6; opacity:.55; }
+.gate__envelope-dot{ fill:var(--oro); opacity:.6; }
 .gate__envelope:hover .gate__envelope-paper{ fill:var(--blush-2); }
 .gate__envelope-label{
   position:absolute; left:50%; bottom:12%; transform:translateX(-50%);
   z-index:1; font-family:var(--f-display); font-style:italic; letter-spacing:.14em; text-transform:uppercase;
   font-size:.95rem; color:var(--vino); white-space:nowrap;
 }
-.gate__envelope-tap{
+.gate__envelope-seal{
   position:absolute; left:50%; top:67.7%; transform:translate(-50%,-50%);
-  z-index:1; width:26px; height:26px; display:flex; align-items:center; justify-content:center; color:var(--rosa-deep);
+  z-index:1; width:32px; height:32px; display:flex; align-items:center; justify-content:center;
 }
-.gate__tap-icon{ width:14px; height:14px; position:relative; z-index:1; }
+.gate__envelope-seal-icon{ width:100%; height:100%; position:relative; z-index:1; filter:drop-shadow(0 2px 4px rgba(139,79,98,.35)); }
+.seal__ring{ fill:none; stroke:var(--oro); stroke-width:1.2; }
+.seal__fill{ fill:var(--rosa-deep); }
+.seal__letter{ font-family:var(--f-script); font-size:15px; fill:var(--blush); }
 .gate__tap-ring{
   position:absolute; inset:0; border-radius:50%; border:1.5px solid var(--rosa-deep);
   animation:tap-pulse 1.8s ease-out infinite;
@@ -133,7 +139,17 @@ img{ max-width:100%; display:block; }
   100%{ transform:scale(1.6); opacity:0; }
 }
 
-.gate__dress{ width:min(200px, 40vw); height:auto; flex:0 0 auto; margin:1vh 0; }
+.gate__dress{ width:min(180px, 36vw); height:auto; flex:0 0 auto; margin:0.4vh 0; }
+@media (max-height:700px){
+  .gate{ padding:1.5vh 6vw; }
+  .garland{ width:min(320px, 70vw); }
+  .gate__content{ margin:0.4vh auto; }
+  .gate__eyebrow{ margin-bottom:4px; }
+  .gate__xv{ margin:3px 0 6px; }
+  .gate__quote{ margin-bottom:8px; }
+  .gate__envelope{ width:min(170px, 50vw); }
+  .gate__dress{ width:min(130px, 28vw); margin:0; }
+}
 .dress__body{ fill:var(--vestido); opacity:.92; }
 .dress__hair{ fill:var(--vino); opacity:.9; }
 .dress__arm{ fill:var(--tinta-suave); opacity:.55; }
@@ -212,7 +228,7 @@ img{ max-width:100%; display:block; }
    ========================================================= */
 .hero{
   min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; position:relative; padding:10vh 6vw 8vh;
+  text-align:center; position:relative; padding:10vh 6vw 2vh;
 }
 .hero__eyebrow{ max-width:360px; font-size:calc(.85rem * var(--scale-mensajes)); color:var(--tinta-suave); font-style:italic; font-family:var(--f-display); margin-bottom:22px; }
 .hero__frame{
