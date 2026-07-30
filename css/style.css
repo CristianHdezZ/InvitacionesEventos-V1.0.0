@@ -139,7 +139,16 @@ img{ max-width:100%; display:block; }
   100%{ transform:scale(1.6); opacity:0; }
 }
 
-.gate__dress{ width:min(180px, 36vw); height:auto; flex:0 0 auto; margin:0.4vh 0; }
+.gate__dress{
+  width:min(180px, 36vw); height:auto; flex:0 0 auto; margin:0.4vh 0;
+  animation:dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
+}
+@keyframes dress-float{
+  0%, 100%{ transform:translateY(0) rotate(0deg); }
+  25%{ transform:translateY(-5px) rotate(-1.3deg); }
+  50%{ transform:translateY(-9px) rotate(0deg); }
+  75%{ transform:translateY(-5px) rotate(1.3deg); }
+}
 @media (max-height:700px){
   .gate{ padding:1.5vh 6vw; }
   .garland{ width:min(320px, 70vw); }
@@ -293,8 +302,24 @@ img{ max-width:100%; display:block; }
 /* ITINERARIO */
 .timeline{ list-style:none; margin:40px auto 0; padding:0; max-width:340px; text-align:left; position:relative; }
 .timeline::before{ content:''; position:absolute; left:19px; top:6px; bottom:6px; width:1px; background:var(--oro); opacity:.5; }
-.timeline__item{ display:flex; align-items:center; gap:18px; margin-bottom:34px; position:relative; }
+.timeline__item{
+  display:flex; align-items:center; gap:18px; margin-bottom:34px; position:relative;
+  opacity:0; transform:translateX(-24px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
 .timeline__item:last-child{ margin-bottom:0; }
+.timeline__item--visible{ opacity:1; transform:translateX(0); }
+.timeline__item:nth-child(1){ transition-delay:0s; }
+.timeline__item:nth-child(2){ transition-delay:.12s; }
+.timeline__item:nth-child(3){ transition-delay:.24s; }
+.timeline__item:nth-child(4){ transition-delay:.36s; }
+.timeline__item:nth-child(5){ transition-delay:.48s; }
+.timeline__item:nth-child(6){ transition-delay:.6s; }
+.timeline__item:nth-child(7){ transition-delay:.72s; }
+.timeline__item:nth-child(8){ transition-delay:.84s; }
+@media (prefers-reduced-motion: reduce){
+  .timeline__item{ opacity:1; transform:none; transition:none; }
+}
 .timeline__icon{
   width:calc(52px * var(--scale-iconos)); height:calc(52px * var(--scale-iconos)); flex:0 0 auto; border-radius:50%;
   background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));

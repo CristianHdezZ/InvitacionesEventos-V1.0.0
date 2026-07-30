@@ -440,10 +440,10 @@ function iniciarLluviaSobres() {
 async function applyConfig() {
   try {
     const res = await fetch('/api/config');
-    if (!res.ok) return;
+    if (!res.ok) return null;
     const data = await res.json();
     const config = data.config;
-    if (!config) return;
+    if (!config) return null;
 
     renderTextos(config);
     renderFotoPrincipal(config.fotoPrincipal, config.nombre, config.apellido);
@@ -458,8 +458,10 @@ async function applyConfig() {
     renderGaleria(config.galeria);
     renderUbicacion(config.ubicacion);
     applyEstilos(config.estilos);
+    return config;
   } catch (err) {
     console.warn('No se pudo cargar la configuración dinámica; se usa el contenido por defecto del HTML.', err);
+    return null;
   }
 }
 
@@ -501,7 +503,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Carga el contenido editable desde /api/config ANTES de inicializar
   // el resto (así el countdown, la galería y el itinerario ya usan los
   // datos actualizados desde el primer render).
-  await applyConfig();
+  const config = await applyConfig();
 
   /* =========================================================
      LIBRERÍAS PREMIUM (AOS, Swiper, tsParticles, confetti, GSAP)
@@ -513,6 +515,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   // -- AOS: animaciones al hacer scroll --
   if (typeof AOS !== 'undefined') {
     AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true, offset: 80 });
+  }
+
+  // -- Itinerario: los íconos aparecen uno a uno al bajar y se ocultan
+  // al subir (a diferencia de AOS, que solo revela una vez). Se puede
+  // desactivar desde el panel admin (itinerarioAnimado: false) para
+  // dejarlos siempre fijos. --
+  const timelineItems = document.querySelectorAll('.timeline__item');
+  const itinerarioAnimado = config?.itinerarioAnimado !== false;
+  if (timelineItems.length) {
+    if (itinerarioAnimado) {
+      const timelineObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            entry.target.classList.toggle('timeline__item--visible', entry.isIntersecting);
+          });
+        },
+        { threshold: 0.35 }
+      );
+      timelineItems.forEach((item) => timelineObserver.observe(item));
+    } else {
+      timelineItems.forEach((item) => item.classList.add('timeline__item--visible'));
+    }
   }
 
   // -- Swiper: carrusel de la galería --

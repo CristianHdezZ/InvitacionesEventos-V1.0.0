@@ -96,6 +96,7 @@ const DEFAULT_CONFIG = {
     espacioCorona: 14,
     espacioApellido: 4
   },
+  itinerarioAnimado: true,
   itinerario: [
     { titulo: 'Recepción', hora: '7:00 p.m.', icono: 'fi:copa' },
     { titulo: 'Ceremonia', hora: '7:30 p.m.', icono: 'fi:arco' },
@@ -234,6 +235,8 @@ function sanitizeConfig(body) {
 
   const estilos = sanitizeEstilos(b.estilos, estilosPorDefecto());
 
+  const itinerarioAnimado = typeof b.itinerarioAnimado === 'boolean' ? b.itinerarioAnimado : d.itinerarioAnimado;
+
   const itinerario = Array.isArray(b.itinerario)
     ? b.itinerario.slice(0, 10).map((item) => {
         const iconoMigrado = migrarIcono(item?.icono);
@@ -310,6 +313,7 @@ function sanitizeConfig(body) {
     colores,
     tipografia,
     estilos,
+    itinerarioAnimado,
     itinerario,
     vestimenta,
     regalos,

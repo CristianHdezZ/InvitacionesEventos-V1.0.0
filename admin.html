@@ -396,6 +396,13 @@
     <h2>Itinerario</h2>
     <p class="hint" style="margin-bottom:10px;">El estilo se aplica a todas las actividades de la lista.</p>
     <div class="field">
+      <label class="switch-label">
+        <input type="checkbox" id="itinerarioAnimado" checked>
+        Efecto de aparición al hacer scroll (los íconos se desvanecen uno a uno al bajar y subir)
+      </label>
+      <p class="hint">Desactiva esta opción para que los íconos se vean siempre fijos, sin animación.</p>
+    </div>
+    <div class="field">
       <label>Estilo del nombre de la actividad</label>
       <div data-estilo-slot="itinerarioTitulo"></div>
     </div>
@@ -1199,6 +1206,7 @@ function iconoSvg(id, extraClass) {
 
     fillEstilos(config.estilos);
 
+    document.getElementById('itinerarioAnimado').checked = config.itinerarioAnimado !== false;
     itinerarioRows.innerHTML = '';
     (config.itinerario || []).forEach(addItinerarioRow);
 
@@ -1288,6 +1296,7 @@ function iconoSvg(id, extraClass) {
         fuenteApellido: document.getElementById('fontApellido').value
       },
       estilos: collectEstilos(),
+      itinerarioAnimado: document.getElementById('itinerarioAnimado').checked,
       itinerario: [...itinerarioRows.querySelectorAll('.it-row')].map(row => ({
         titulo: row.querySelector('.it-titulo').value.trim(),
         hora: row.querySelector('.it-hora').value.trim(),
