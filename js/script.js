@@ -849,10 +849,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const musicaStatus = document.getElementById('musicaStatus');
   const musicaSubmit = document.getElementById('musicaSubmit');
   const musicaEndpoint = musicaForm.dataset.endpoint;
+  const musicaPlayerFrame = document.querySelector('.musica__player iframe');
+  const musicaPlayerBaseSrc = musicaPlayerFrame ? musicaPlayerFrame.src : null;
 
   function setMusicaStatus(text, state){
     musicaStatus.textContent = text;
     musicaStatus.setAttribute('data-state', state || '');
+  }
+
+  // Refresca el reproductor incrustado (sin recargar la página) para que
+  // se vea la playlist actualizada tras agregar una sugerencia.
+  function refrescarPlaylist(){
+    if (!musicaPlayerFrame) return;
+    const separador = musicaPlayerBaseSrc.includes('?') ? '&' : '?';
+    musicaPlayerFrame.src = `${musicaPlayerBaseSrc}${separador}_r=${Date.now()}`;
   }
 
   musicaForm.addEventListener('submit', async (e) => {
@@ -885,6 +895,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (response.ok){
         setMusicaStatus('¡Gracias! Ya anotamos tu sugerencia. 🎶', 'ok');
         musicaForm.reset();
+        setTimeout(refrescarPlaylist, 1500);
       } else if (response.status === 429){
         setMusicaStatus(payload?.error || 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.', 'error');
       } else if (response.status === 400 && Array.isArray(payload?.errors) && payload.errors.length){

@@ -81,7 +81,18 @@
       Me siento muy feliz de llegar a este momento de mi vida y quiero
       compartirlo contigo.
     </p>
-    <button class="gate__btn" id="gateBtn" type="button">Abrir invitación</button>
+    <button class="gate__envelope" id="gateBtn" type="button" aria-label="Abrir invitación">
+      <svg class="gate__envelope-body" viewBox="0 0 220 130" aria-hidden="true">
+        <rect x="3" y="3" width="214" height="124" rx="14" class="gate__envelope-paper"/>
+        <path d="M3,17 L110,88 L217,17" class="gate__envelope-flap"/>
+      </svg>
+      <span class="gate__envelope-tap" aria-hidden="true">
+        <span class="gate__tap-ring"></span>
+        <span class="gate__tap-ring gate__tap-ring--2"></span>
+        <svg class="gate__tap-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      </span>
+      <span class="gate__envelope-label">Ver invitación</span>
+    </button>
   </div>
 
   <svg class="gate__dress" viewBox="0 -10 220 270" aria-hidden="true">
@@ -156,8 +167,8 @@
 <!-- ===================== NAV DE PROGRESO ===================== -->
 <nav class="dot-nav" aria-label="Navegación de secciones">
   <a href="#hero" data-label="Inicio"></a>
-  <a href="#carta" data-label="Carta"></a>
   <a href="#cuenta" data-label="Cuenta regresiva"></a>
+  <a href="#carta" data-label="Carta"></a>
   <a href="#itinerario" data-label="Itinerario"></a>
   <a href="#vestimenta" data-label="Vestimenta"></a>
   <a href="#regalos" data-label="Regalos"></a>
@@ -195,6 +206,20 @@
 </header>
 
 <main>
+
+  <!-- ===================== CUENTA REGRESIVA ===================== -->
+  <section id="cuenta" class="section cuenta">
+    <div class="section__inner" data-aos="fade-up">
+      <span class="section__eyebrow">Falta poco</span>
+      <h2 class="section__title">La cuenta regresiva ya empezó</h2>
+      <div id="countdown" class="countdown" data-date="2026-09-19T18:00:00">
+        <div class="countdown__item"><span class="countdown__num" id="cd-days">00</span><span class="countdown__label">Días</span></div>
+        <div class="countdown__item"><span class="countdown__num" id="cd-hours">00</span><span class="countdown__label">Horas</span></div>
+        <div class="countdown__item"><span class="countdown__num" id="cd-mins">00</span><span class="countdown__label">Min</span></div>
+        <div class="countdown__item"><span class="countdown__num" id="cd-secs">00</span><span class="countdown__label">Seg</span></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== CARTA / MENSAJE PERSONALIZADO ===================== -->
   <section id="carta" class="section carta">
@@ -274,20 +299,6 @@
       <g class="rose" transform="translate(410,68) scale(0.7)"><path d="M0,-28 C14,-28 24,-16 22,-2 C20,10 8,18 -4,16 C-18,14 -26,2 -22,-12 C-19,-22 -10,-28 0,-28 Z" class="rose__c1"/><path d="M-2,-18 C10,-20 18,-10 15,2 C12,12 0,16 -9,11 C-17,6 -18,-6 -12,-13 C-9,-16 -6,-18 -2,-18 Z" class="rose__c2"/><path d="M2,-10 C9,-9 12,-2 9,4 C6,9 -1,10 -5,5 C-8,1 -6,-5 -1,-7" class="rose__spiral"/><ellipse cx="-8" cy="-10" rx="5" ry="3" class="rose__c3" transform="rotate(-30 -8 -10)"/></g>
       <path d="M0,60 Q150,90 250,65 T500,60" class="garland__vine"/>
     </svg>
-  </section>
-
-  <!-- ===================== CUENTA REGRESIVA ===================== -->
-  <section id="cuenta" class="section cuenta">
-    <div class="section__inner" data-aos="fade-up">
-      <span class="section__eyebrow">Falta poco</span>
-      <h2 class="section__title">La cuenta regresiva ya empezó</h2>
-      <div id="countdown" class="countdown" data-date="2026-09-19T18:00:00">
-        <div class="countdown__item"><span class="countdown__num" id="cd-days">00</span><span class="countdown__label">Días</span></div>
-        <div class="countdown__item"><span class="countdown__num" id="cd-hours">00</span><span class="countdown__label">Horas</span></div>
-        <div class="countdown__item"><span class="countdown__num" id="cd-mins">00</span><span class="countdown__label">Min</span></div>
-        <div class="countdown__item"><span class="countdown__num" id="cd-secs">00</span><span class="countdown__label">Seg</span></div>
-      </div>
-    </div>
   </section>
 
   <!-- ===================== ITINERARIO ===================== -->

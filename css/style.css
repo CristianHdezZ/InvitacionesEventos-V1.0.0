@@ -104,18 +104,34 @@ img{ max-width:100%; display:block; }
   font-size:calc(1.02rem * var(--scale-mensajes)); color:var(--tinta);
   max-width:360px; margin:0 auto 22px;
 }
-.gate__btn{
-  border:1px solid var(--rosa-deep);
-  background:transparent;
-  color:var(--vino);
-  font-family:var(--f-display); font-style:italic;
-  font-size:1rem;
-  padding:12px 30px;
-  border-radius:30px;
-  cursor:pointer;
-  transition:background .35s, color .35s;
+.gate__envelope{
+  position:relative; display:block;
+  width:min(240px, 72vw); aspect-ratio:220/130; padding:0; margin:0 auto;
+  border:0; background:transparent; cursor:pointer;
 }
-.gate__btn:hover{ background:var(--rosa-deep); color:var(--blanco); }
+.gate__envelope-body{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+.gate__envelope-paper{ fill:var(--blush); stroke:var(--oro); stroke-width:1.5; transition:fill .35s var(--ease); }
+.gate__envelope-flap{ fill:none; stroke:var(--oro); stroke-width:1.5; stroke-linejoin:round; }
+.gate__envelope:hover .gate__envelope-paper{ fill:var(--blush-2); }
+.gate__envelope-label{
+  position:absolute; left:50%; bottom:12%; transform:translateX(-50%);
+  z-index:1; font-family:var(--f-display); font-style:italic; letter-spacing:.14em; text-transform:uppercase;
+  font-size:.95rem; color:var(--vino); white-space:nowrap;
+}
+.gate__envelope-tap{
+  position:absolute; left:50%; top:67.7%; transform:translate(-50%,-50%);
+  z-index:1; width:26px; height:26px; display:flex; align-items:center; justify-content:center; color:var(--rosa-deep);
+}
+.gate__tap-icon{ width:14px; height:14px; position:relative; z-index:1; }
+.gate__tap-ring{
+  position:absolute; inset:0; border-radius:50%; border:1.5px solid var(--rosa-deep);
+  animation:tap-pulse 1.8s ease-out infinite;
+}
+.gate__tap-ring--2{ animation-delay:.9s; }
+@keyframes tap-pulse{
+  0%{ transform:scale(.4); opacity:.8; }
+  100%{ transform:scale(1.6); opacity:0; }
+}
 
 .gate__dress{ width:min(200px, 40vw); height:auto; flex:0 0 auto; margin:1vh 0; }
 .dress__body{ fill:var(--vestido); opacity:.92; }
