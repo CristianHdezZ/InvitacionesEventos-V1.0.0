@@ -78,7 +78,8 @@ const DEFAULT_CONFIG = {
   },
   corona: {
     tipo: 'svg',
-    imagenUrl: ''
+    imagenUrl: '',
+    escala: 100
   },
   colores: {
     blush: '#FBEAEE',
@@ -340,7 +341,8 @@ function sanitizeConfig(body) {
     },
     corona: {
       tipo: sanitizeChoice(b?.corona?.tipo, CORONA_TIPOS_VALIDOS, d.corona.tipo),
-      imagenUrl: sanitizeUrl(b?.corona?.imagenUrl, d.corona.imagenUrl)
+      imagenUrl: sanitizeUrl(b?.corona?.imagenUrl, d.corona.imagenUrl),
+      escala: sanitizeEntero(b?.corona?.escala, 30, 250, d.corona.escala)
     },
     colores,
     tipografia,

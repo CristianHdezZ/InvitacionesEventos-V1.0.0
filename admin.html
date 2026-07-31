@@ -286,6 +286,14 @@
       <p class="hint">Usa una imagen con fondo transparente (PNG). Ruta propia o enlace público, igual que la foto principal.</p>
       <img id="coronaPreview" alt="" style="width:70px; height:auto; display:block; margin-top:8px;">
     </div>
+    <div class="field">
+      <label for="coronaEscala">Tamaño de la corona</label>
+      <div class="rango-field">
+        <input type="range" id="coronaEscala" min="30" max="250" step="5" value="100">
+        <output id="coronaEscalaVal">100%</output>
+      </div>
+      <p class="hint">Se aplica tanto al dibujo (SVG) como a la imagen personalizada, en la portada y en el inicio.</p>
+    </div>
   </div>
 
   <div class="card-box">
@@ -958,6 +966,13 @@ function iconoSvg(id, extraClass) {
     rangoIlustracionEscala.addEventListener('input', pintarEscala);
     pintarEscala();
   }
+  const rangoCoronaEscala = document.getElementById('coronaEscala');
+  const rangoCoronaEscalaVal = document.getElementById('coronaEscalaVal');
+  if (rangoCoronaEscala && rangoCoronaEscalaVal) {
+    const pintarEscalaCorona = () => { rangoCoronaEscalaVal.textContent = rangoCoronaEscala.value + '%'; };
+    rangoCoronaEscala.addEventListener('input', pintarEscalaCorona);
+    pintarEscalaCorona();
+  }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1342,6 +1357,9 @@ function iconoSvg(id, extraClass) {
     cfgCoronaUrl.value = corona.imagenUrl || '';
     coronaPreview.src = corona.imagenUrl || '';
     actualizarCoronaCampos();
+    const escalaCorona = (typeof corona.escala === 'number') ? corona.escala : 100;
+    rangoCoronaEscala.value = escalaCorona;
+    rangoCoronaEscalaVal.textContent = escalaCorona + '%';
 
     const c = config.colores || {};
     document.getElementById('colBlush').value = c.blush || '#FBEAEE';
@@ -1449,7 +1467,8 @@ function iconoSvg(id, extraClass) {
       },
       corona: {
         tipo: document.querySelector('input[name="coronaTipo"]:checked')?.value || 'svg',
-        imagenUrl: cfgCoronaUrl.value.trim()
+        imagenUrl: cfgCoronaUrl.value.trim(),
+        escala: parseInt(rangoCoronaEscala.value, 10)
       },
       fraseInvitacion: document.getElementById('cfgFraseInvitacion').value.trim(),
       fraseFecha: document.getElementById('cfgFraseFecha').value.trim(),

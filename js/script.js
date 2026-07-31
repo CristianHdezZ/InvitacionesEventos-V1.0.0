@@ -411,6 +411,9 @@ function renderIlustracionQuinceanera(cfg) {
 }
 
 function renderCorona(cfg) {
+  const escala = Number(cfg?.escala);
+  document.documentElement.style.setProperty('--corona-escala', Number.isFinite(escala) && escala > 0 ? escala / 100 : 1);
+
   const pares = [
     { svg: document.getElementById('gateCoronaSvg'), img: document.getElementById('gateCoronaImg') },
     { svg: document.getElementById('heroCoronaSvg'), img: document.getElementById('heroCoronaImg') }
@@ -866,12 +869,14 @@ async function generarTarjetaPDF(nombreInvitado, config) {
 // el formulario, para abrir el chat directamente con ella (no un
 // selector genérico). Si no trae indicativo de país, asume Colombia
 // (+57) — el formulario pide el número local de 10 dígitos.
-function construirLinkWhatsapp(telefono) {
+function construirLinkWhatsapp(telefono, mensaje) {
   if (!telefono) return null;
   const soloDigitos = telefono.replace(/\D/g, '');
   if (!soloDigitos) return null;
   const conIndicativo = soloDigitos.length === 10 ? '57' + soloDigitos : soloDigitos;
-  return 'https://api.whatsapp.com/send/?phone=' + conIndicativo;
+  let url = 'https://api.whatsapp.com/send/?phone=' + conIndicativo;
+  if (mensaje) url += '&text=' + encodeURIComponent(mensaje);
+  return url;
 }
 
 function prepararTarjetaInvitacion(nombreInvitado, config, telefonoInvitado) {
@@ -895,25 +900,31 @@ function prepararTarjetaInvitacion(nombreInvitado, config, telefonoInvitado) {
 
     const nombreArchivo = 'Invitacion-XV-' + (nombreInvitado || 'invitado').trim().replace(/\s+/g, '-') + '.pdf';
     const blobUrl = URL.createObjectURL(blob);
+    const descargarTarjeta = () => {
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = nombreArchivo;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
 
     if (descargarBtn) {
       descargarBtn.hidden = false;
-      descargarBtn.onclick = () => {
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = nombreArchivo;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      };
+      descargarBtn.onclick = descargarTarjeta;
     }
 
     if (whatsappBtn) {
-      const linkWhatsapp = construirLinkWhatsapp(telefonoInvitado);
+      const nombreQuinceanera = [config?.nombre, config?.apellido].filter(Boolean).join(' ');
+      const mensaje = '¡Hola! Confirmé mi asistencia a los XV años de ' + (nombreQuinceanera || '') + ' 💕 Te comparto mi tarjeta de invitación (la acabo de descargar, ya te la adjunto).';
+      const linkWhatsapp = construirLinkWhatsapp(telefonoInvitado, mensaje);
+      const hint = document.getElementById('rsvpWhatsappHint');
       if (linkWhatsapp) {
         whatsappBtn.hidden = false;
         whatsappBtn.onclick = () => {
+          descargarTarjeta();
           window.open(linkWhatsapp, '_blank', 'noopener');
+          if (hint) hint.hidden = false;
         };
       }
     }
