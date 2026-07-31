@@ -204,6 +204,7 @@ const ESTILO_SELECTORES = {
   fraseGate:          ['.gate__quote'],
   carta:              ['.carta__texto'],
   hashtag:            ['.footer__hashtag'],
+  footerMensaje:      ['.footer__mensaje'],
   vestimentaNota:     ['#vestimentaNota'],
   regalosTitulo:      ['#regalosTitulo'],
   regalosMensaje:     ['#regalosMensaje'],
@@ -275,7 +276,16 @@ function renderTextos(config) {
   setText('.hero__subtitle', config.fraseFecha);
   setText('.carta__texto', config.mensajeCarta);
   if (config.nombre) setText('.carta__firma', 'Con cariño, ' + config.nombre);
-  setText('.footer__hashtag', config.hashtag);
+  setText('.footer__mensaje', config.footerMensaje);
+
+  const hashtagEl = document.getElementById('footerHashtagLink');
+  if (hashtagEl && config.hashtag) {
+    hashtagEl.textContent = config.hashtag;
+    const slug = config.hashtag.replace(/^#/, '').trim().replace(/\s+/g, '');
+    hashtagEl.href = slug
+      ? `https://www.instagram.com/explore/tags/${encodeURIComponent(slug)}/`
+      : '#';
+  }
 }
 
 function renderFecha(fechaEvento) {
@@ -471,10 +481,10 @@ function iniciarLluviaSobres() {
 async function applyConfig() {
   try {
     const res = await fetch('/api/config');
-    if (!res.ok) return null;
+    if (!res.ok) { renderIlustracionQuinceanera(null); return null; }
     const data = await res.json();
     const config = data.config;
-    if (!config) return null;
+    if (!config) { renderIlustracionQuinceanera(null); return null; }
 
     renderTextos(config);
     renderFotoPrincipal(config.fotoPrincipal, config.nombre, config.apellido);
@@ -484,6 +494,7 @@ async function applyConfig() {
     renderFecha(config.fechaEvento);
     applyColors(config.colores);
     applyTipografia(config.tipografia, config.estilos);
+    document.body.classList.toggle('tarjetas-activas', config.disenoTarjetas === true);
     renderItinerario(config.itinerario);
     renderVestimenta(config.vestimenta);
     renderRegalos(config.regalos);
@@ -493,6 +504,7 @@ async function applyConfig() {
     return config;
   } catch (err) {
     console.warn('No se pudo cargar la configuración dinámica; se usa el contenido por defecto del HTML.', err);
+    renderIlustracionQuinceanera(null);
     return null;
   }
 }

@@ -192,6 +192,13 @@
       hasta que pulses "Guardar cambios" al final.
     </p>
     <div class="template-grid" id="templateGrid"></div>
+    <div class="field" style="margin-top:16px;">
+      <label class="switch-label">
+        <input type="checkbox" id="disenoTarjetas">
+        Diseño de tarjetas (fondo blanco redondeado + ícono circular por sección)
+      </label>
+      <p class="hint">Se puede combinar con cualquier plantilla de color de arriba. Aplica a: Cuenta regresiva, Ubicación, Confirmar asistencia, Vestimenta, Regalos, Itinerario y Galería.</p>
+    </div>
   </div>
 
   <div class="card-box">
@@ -208,7 +215,11 @@
       <p class="hint">El día, mes y año que se muestran en la invitación y la cuenta regresiva se calculan solos a partir de esta fecha.</p>
     </div>
     <div class="field"><label for="cfgHashtag">Hashtag</label><input type="text" id="cfgHashtag" placeholder="#NombreXV2026">
+      <p class="hint">Al final de la página queda como enlace a Instagram (búsqueda de ese hashtag).</p>
       <div data-estilo-slot="hashtag"></div></div>
+    <div class="field"><label for="cfgFooterMensaje">Mensaje de agradecimiento (pie de página)</label>
+      <input type="text" id="cfgFooterMensaje" placeholder="Gracias por ser parte de este capítulo">
+      <div data-estilo-slot="footerMensaje"></div></div>
     <div class="field">
       <label for="cfgFoto">URL de la foto principal (retrato en la portada)</label>
       <input type="text" id="cfgFoto" placeholder="assets/gallery/foto.jpg o https://...">
@@ -791,7 +802,8 @@ function iconoSvg(id, extraClass) {
   const ESTILO_CAMPOS = [
     'nombre','apellido','fraseInvitacion','fraseFecha','fraseGate','carta','hashtag',
     'vestimentaNota','regalosTitulo','regalosMensaje','regalosDetalle',
-    'itinerarioTitulo','itinerarioHora','ubicacionLugar','ubicacionDireccion','ubicacionHora'
+    'itinerarioTitulo','itinerarioHora','ubicacionLugar','ubicacionDireccion','ubicacionHora',
+    'footerMensaje'
   ];
 
   function estiloBoxHtml(clave){
@@ -1250,6 +1262,7 @@ function iconoSvg(id, extraClass) {
     document.getElementById('cfgApellido').value = config.apellido || '';
     document.getElementById('cfgFecha').value = isoToLocalInput(config.fechaEvento);
     document.getElementById('cfgHashtag').value = config.hashtag || '';
+    document.getElementById('cfgFooterMensaje').value = config.footerMensaje || '';
     document.getElementById('cfgFraseInvitacion').value = config.fraseInvitacion || '';
     document.getElementById('cfgFraseFecha').value = config.fraseFecha || '';
     document.getElementById('cfgFrase').value = config.fraseGate || '';
@@ -1306,6 +1319,7 @@ function iconoSvg(id, extraClass) {
     fillEstilos(config.estilos);
 
     document.getElementById('itinerarioAnimado').checked = config.itinerarioAnimado !== false;
+    document.getElementById('disenoTarjetas').checked = config.disenoTarjetas === true;
     itinerarioRows.innerHTML = '';
     (config.itinerario || []).forEach(addItinerarioRow);
 
@@ -1364,6 +1378,7 @@ function iconoSvg(id, extraClass) {
       apellido: document.getElementById('cfgApellido').value.trim(),
       fechaEvento: document.getElementById('cfgFecha').value,
       hashtag: document.getElementById('cfgHashtag').value.trim(),
+      footerMensaje: document.getElementById('cfgFooterMensaje').value.trim(),
       fotoPrincipal: document.getElementById('cfgFoto').value.trim(),
       lottieGate: document.getElementById('cfgLottie').value.trim(),
       musica: document.getElementById('cfgMusica').value.trim(),
@@ -1405,6 +1420,7 @@ function iconoSvg(id, extraClass) {
       },
       estilos: collectEstilos(),
       itinerarioAnimado: document.getElementById('itinerarioAnimado').checked,
+      disenoTarjetas: document.getElementById('disenoTarjetas').checked,
       itinerario: [...itinerarioRows.querySelectorAll('.it-row')].map(row => ({
         titulo: row.querySelector('.it-titulo').value.trim(),
         hora: row.querySelector('.it-hora').value.trim(),

@@ -66,6 +66,7 @@ const DEFAULT_CONFIG = {
   fraseGate: 'Hay momentos inolvidables que se atesoran en el corazón para siempre. Me siento muy feliz de llegar a este momento de mi vida y quiero compartirlo contigo.',
   mensajeCarta: 'Hoy quiero compartir contigo uno de los días más felices de mi vida. Quince años de historias, de risas y de aprender a florecer, y quiero que estés ahí para verlo con tus propios ojos. Esta invitación es un pedacito de mi corazón, hecha con la misma ilusión con la que espero abrazarte ese día.',
   hashtag: '#LindaXV2026',
+  footerMensaje: 'Gracias por ser parte de este capítulo',
   fotoPrincipal: 'assets/gallery/image01.jpeg',
   lottieGate: 'assets/flor.json',
   musica: 'assets/music/LaPrincesadePapa.mp3',
@@ -103,6 +104,7 @@ const DEFAULT_CONFIG = {
     espacioApellido: 4
   },
   itinerarioAnimado: true,
+  disenoTarjetas: false,
   itinerario: [
     { titulo: 'Recepción', hora: '7:00 p.m.', icono: 'fi:copa' },
     { titulo: 'Ceremonia', hora: '7:30 p.m.', icono: 'fi:arco' },
@@ -174,7 +176,7 @@ function sanitizeUrl(value, fallback) {
 // Elementos de texto que pueden tener color/fuente/tamaño propios desde el
 // admin. Si un valor queda vacío, el elemento hereda el estilo global.
 const ELEMENTOS_ESTILO = [
-  'nombre', 'apellido', 'fraseInvitacion', 'fraseFecha', 'fraseGate', 'carta', 'hashtag',
+  'nombre', 'apellido', 'fraseInvitacion', 'fraseFecha', 'fraseGate', 'carta', 'hashtag', 'footerMensaje',
   'vestimentaNota', 'regalosTitulo', 'regalosMensaje', 'regalosDetalle',
   'itinerarioTitulo', 'itinerarioHora', 'ubicacionLugar', 'ubicacionDireccion', 'ubicacionHora'
 ];
@@ -244,6 +246,7 @@ function sanitizeConfig(body) {
   const estilos = sanitizeEstilos(b.estilos, estilosPorDefecto());
 
   const itinerarioAnimado = typeof b.itinerarioAnimado === 'boolean' ? b.itinerarioAnimado : d.itinerarioAnimado;
+  const disenoTarjetas = typeof b.disenoTarjetas === 'boolean' ? b.disenoTarjetas : d.disenoTarjetas;
 
   const itinerario = Array.isArray(b.itinerario)
     ? b.itinerario.slice(0, 10).map((item) => {
@@ -317,6 +320,7 @@ function sanitizeConfig(body) {
     fraseGate: sanitizeText(b.fraseGate, 400, d.fraseGate),
     mensajeCarta: sanitizeText(b.mensajeCarta, 800, d.mensajeCarta),
     hashtag: sanitizeText(b.hashtag, 40, d.hashtag),
+    footerMensaje: sanitizeText(b.footerMensaje, 200, d.footerMensaje),
     fotoPrincipal: sanitizeUrl(b.fotoPrincipal, d.fotoPrincipal),
     lottieGate: sanitizeUrl(b.lottieGate, d.lottieGate),
     musica: sanitizeUrl(b.musica, d.musica),
@@ -329,6 +333,7 @@ function sanitizeConfig(body) {
     tipografia,
     estilos,
     itinerarioAnimado,
+    disenoTarjetas,
     itinerario,
     vestimenta,
     regalos,

@@ -117,7 +117,7 @@ img{ max-width:100%; display:block; }
 .gate__envelope-flap{ fill:none; stroke:var(--oro); stroke-width:1.5; stroke-linejoin:round; }
 .gate__envelope-flap--inner{ stroke-width:.6; opacity:.55; }
 .gate__envelope-dot{ fill:var(--oro); opacity:.6; }
-.gate__envelope:hover .gate__envelope-paper{ fill:var(--blush-2); }
+@media (hover:hover){ .gate__envelope:hover .gate__envelope-paper{ fill:var(--blush-2); } }
 .gate__envelope-label{
   position:absolute; left:50%; bottom:12%; transform:translateX(-50%);
   z-index:1; font-family:var(--f-display); font-style:italic; letter-spacing:.14em; text-transform:uppercase;
@@ -241,6 +241,95 @@ img{ max-width:100%; display:block; }
 }
 
 /* =========================================================
+   DISEÑO DE TARJETAS (opcional — interruptor independiente
+   en el admin, se puede combinar con cualquier plantilla de
+   color). Por defecto el badge está oculto y las secciones
+   se ven como siempre; solo cambia con body.tarjetas-activas.
+   ========================================================= */
+.section-badge{ display:none; }
+body.tarjetas-activas #cuenta .section__inner,
+body.tarjetas-activas #carta .section__inner,
+body.tarjetas-activas #detalles .section__inner,
+body.tarjetas-activas #rsvp .section__inner,
+body.tarjetas-activas #vestimenta .section__inner,
+body.tarjetas-activas #regalos .section__inner,
+body.tarjetas-activas #itinerario .section__inner,
+body.tarjetas-activas #galeria .section__inner,
+body.tarjetas-activas #musica .section__inner{
+  position:relative;
+  background:linear-gradient(165deg, #fff 0%, #fff 55%, var(--blush) 130%);
+  border-radius:26px;
+  box-shadow:0 26px 54px -26px rgba(139,79,98,.42), inset 0 0 0 1px rgba(184,147,92,.14);
+  padding:54px 30px 38px;
+}
+body.tarjetas-activas #cuenta .section__inner::before,
+body.tarjetas-activas #carta .section__inner::before,
+body.tarjetas-activas #detalles .section__inner::before,
+body.tarjetas-activas #rsvp .section__inner::before,
+body.tarjetas-activas #vestimenta .section__inner::before,
+body.tarjetas-activas #regalos .section__inner::before,
+body.tarjetas-activas #itinerario .section__inner::before,
+body.tarjetas-activas #galeria .section__inner::before,
+body.tarjetas-activas #musica .section__inner::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  border-radius:26px 26px 0 0;
+  background:linear-gradient(90deg, transparent, var(--oro) 30%, var(--rosa-deep) 70%, transparent);
+  opacity:.65;
+}
+body.tarjetas-activas .section__inner::after{
+  content:'✦'; position:absolute; top:20px; right:24px; z-index:1;
+  font-size:1rem; color:var(--oro); opacity:.5; pointer-events:none;
+}
+body.tarjetas-activas .section-badge{
+  display:flex; align-items:center; justify-content:center;
+  position:absolute; top:0; left:32px; transform:translateY(-50%);
+  width:60px; height:60px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
+  color:var(--icono, var(--vino));
+  box-shadow:0 16px 32px -14px rgba(139,79,98,.55), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.22);
+}
+body.tarjetas-activas .section-badge::after{
+  content:''; position:absolute; inset:-4px; border-radius:50%;
+  border:1.5px solid var(--oro); opacity:.45;
+}
+body.tarjetas-activas .section-badge svg{ width:26px; height:26px; position:relative; z-index:1; }
+body.tarjetas-activas #detalles .ubicacion{
+  background:linear-gradient(165deg, #fff 0%, #fff 55%, var(--blush) 130%);
+  border-radius:26px;
+  box-shadow:0 26px 54px -26px rgba(139,79,98,.42), inset 0 0 0 1px rgba(184,147,92,.14);
+  padding:32px 28px;
+  margin-top:20px;
+}
+@media (max-width:600px){
+  body.tarjetas-activas #cuenta .section__inner,
+  body.tarjetas-activas #carta .section__inner,
+  body.tarjetas-activas #detalles .section__inner,
+  body.tarjetas-activas #rsvp .section__inner,
+  body.tarjetas-activas #vestimenta .section__inner,
+  body.tarjetas-activas #regalos .section__inner,
+  body.tarjetas-activas #itinerario .section__inner,
+  body.tarjetas-activas #galeria .section__inner,
+  body.tarjetas-activas #musica .section__inner{
+    padding:48px 20px 30px; border-radius:20px;
+  }
+  body.tarjetas-activas #cuenta .section__inner::before,
+  body.tarjetas-activas #carta .section__inner::before,
+  body.tarjetas-activas #detalles .section__inner::before,
+  body.tarjetas-activas #rsvp .section__inner::before,
+  body.tarjetas-activas #vestimenta .section__inner::before,
+  body.tarjetas-activas #regalos .section__inner::before,
+  body.tarjetas-activas #itinerario .section__inner::before,
+  body.tarjetas-activas #galeria .section__inner::before,
+  body.tarjetas-activas #musica .section__inner::before{
+    border-radius:20px 20px 0 0;
+  }
+  body.tarjetas-activas .section-badge{ left:22px; width:50px; height:50px; }
+  body.tarjetas-activas .section-badge svg{ width:22px; height:22px; }
+  body.tarjetas-activas .section__inner::after{ top:16px; right:18px; font-size:.85rem; }
+  body.tarjetas-activas #detalles .ubicacion{ padding:20px 18px; border-radius:20px; }
+}
+
+/* =========================================================
    MUSIC TOGGLE
    ========================================================= */
 .music-toggle{
@@ -284,7 +373,7 @@ img{ max-width:100%; display:block; }
   font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--tinta-suave);
   background:transparent; transition:background .35s var(--ease);
 }
-.hero__badge:hover{ background:var(--blush-2); }
+@media (hover:hover){ .hero__badge:hover{ background:var(--blush-2); } }
 .hero__badge strong{ font-family:var(--f-display); font-size:1.6rem; color:var(--vino); font-weight:600; }
 .hero__year{ margin-top:10px; letter-spacing:.3em; color:var(--oro); font-size:.85rem; }
 .hero__padrinos-label{ margin-top:26px; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--tinta-suave); }
@@ -391,7 +480,7 @@ img{ max-width:100%; display:block; }
   content:''; position:absolute; inset:-5px; border-radius:50%;
   border:1.5px solid var(--oro); opacity:.42;
 }
-.vestimenta__icon:hover{ transform:translateY(-4px) scale(1.04); box-shadow:0 22px 44px -18px rgba(139,79,98,.6), inset 0 0 0 4px rgba(184,147,92,.18); }
+@media (hover:hover){ .vestimenta__icon:hover{ transform:translateY(-4px) scale(1.04); box-shadow:0 22px 44px -18px rgba(139,79,98,.6), inset 0 0 0 4px rgba(184,147,92,.18); } }
 .vestimenta__icon svg{ width:calc(54px * var(--scale-iconos)); height:calc(54px * var(--scale-iconos)); color:var(--icono-vestimenta, var(--icono)); }
 .vestimenta__icon img{ width:calc(76px * var(--scale-iconos)); height:calc(76px * var(--scale-iconos)); object-fit:contain; border-radius:50%; }
 .vestimenta__nota{ font-size:calc(.9rem * var(--scale-mensajes)); color:var(--tinta-suave); font-style:italic; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; }
@@ -453,12 +542,19 @@ img{ max-width:100%; display:block; }
   0%, 100%{ transform:translateY(0); }
   50%{ transform:translateY(-8px); }
 }
-.ubicacion__icono:hover, .ubicacion__icono:focus-visible{
+.ubicacion__icono:focus-visible{
   color:var(--rosa-oscuro);
   box-shadow:0 18px 34px -14px rgba(139,79,98,.65), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.28);
 }
+@media (hover:hover){
+  .ubicacion__icono:hover{
+    color:var(--rosa-oscuro);
+    box-shadow:0 18px 34px -14px rgba(139,79,98,.65), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.28);
+  }
+}
 .ubicacion__icono::after{ content:''; position:absolute; inset:-4px; border-radius:50%; border:1.5px solid var(--oro); opacity:.4; transition:border-color .3s var(--ease); }
-.ubicacion__icono:hover::after, .ubicacion__icono:focus-visible::after{ border-color:var(--rosa-oscuro); }
+.ubicacion__icono:focus-visible::after{ border-color:var(--rosa-oscuro); }
+@media (hover:hover){ .ubicacion__icono:hover::after{ border-color:var(--rosa-oscuro); } }
 .ubicacion__icono svg{ width:30px; height:30px; color:inherit; }
 .ubicacion__eyebrow{ display:block; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--oro); margin:0 0 8px; }
 .detalle-card h3{ font-size:calc(1.9rem * var(--scale-titulos)); font-weight:400; color:var(--rosa-deep); margin-bottom:0; }
@@ -573,7 +669,10 @@ img{ max-width:100%; display:block; }
 /* FOOTER */
 .footer{ text-align:center; padding:var(--section-gap) 6vw clamp(40px, 6vh, 64px); color:var(--tinta-suave); font-size:.85rem; }
 .footer__ornament{ color:var(--oro); font-size:1.4rem; margin-bottom:10px; }
-.footer__hashtag{ margin-top:6px; color:var(--rosa-deep); letter-spacing:.14em; text-transform:uppercase; font-size:.72rem; }
+.footer__mensaje{ margin:0 0 4px; }
+.footer__hashtag{ display:inline-block; margin-top:6px; color:var(--rosa-deep); letter-spacing:.14em; text-transform:uppercase; font-size:.72rem; text-decoration:none; border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease); }
+.footer__hashtag:focus-visible{ color:var(--rosa-oscuro, var(--vino)); border-color:currentColor; }
+@media (hover:hover){ .footer__hashtag:hover{ color:var(--rosa-oscuro, var(--vino)); border-color:currentColor; } }
 .footer__credits{ margin-top:14px; font-size:.62rem; color:var(--tinta-suave); opacity:.55; letter-spacing:.02em; }
 .footer__credits a{ color:inherit; text-decoration:none; border-bottom:1px solid currentColor; }
 
