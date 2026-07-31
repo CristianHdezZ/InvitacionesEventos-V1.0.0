@@ -269,6 +269,23 @@
       </div>
       <p class="hint">Se aplica a cualquiera de las tres opciones de arriba, en la portada y en la carta.</p>
     </div>
+    <div class="field">
+      <label>Corona sobre el nombre (portada e inicio)</label>
+      <label class="switch-label" style="font-weight:normal;">
+        <input type="radio" name="coronaTipo" id="coronaTipoSvg" value="svg" checked>
+        Dibujo (SVG) — se puede recolorear desde este panel
+      </label>
+      <label class="switch-label" style="font-weight:normal;">
+        <input type="radio" name="coronaTipo" id="coronaTipoImagen" value="imagen">
+        Imagen personalizada
+      </label>
+    </div>
+    <div class="field" id="coronaImagenField" style="display:none;">
+      <label for="cfgCoronaUrl">URL de la imagen</label>
+      <input type="text" id="cfgCoronaUrl" placeholder="assets/gallery/corona.png o https://...">
+      <p class="hint">Usa una imagen con fondo transparente (PNG). Ruta propia o enlace público, igual que la foto principal.</p>
+      <img id="coronaPreview" alt="" style="width:70px; height:auto; display:block; margin-top:8px;">
+    </div>
   </div>
 
   <div class="card-box">
@@ -1210,6 +1227,27 @@ function iconoSvg(id, extraClass) {
     }, 500);
   });
 
+  /* ---------------- Corona sobre el nombre: SVG o imagen ---------------- */
+  const coronaImagenField = document.getElementById('coronaImagenField');
+  const coronaPreview = document.getElementById('coronaPreview');
+  const cfgCoronaUrl = document.getElementById('cfgCoronaUrl');
+
+  function actualizarCoronaCampos(){
+    const esImagen = document.getElementById('coronaTipoImagen').checked;
+    coronaImagenField.style.display = esImagen ? '' : 'none';
+  }
+  document.querySelectorAll('input[name="coronaTipo"]').forEach((input) => {
+    input.addEventListener('change', actualizarCoronaCampos);
+  });
+
+  let coronaDebounce;
+  cfgCoronaUrl.addEventListener('input', (e) => {
+    clearTimeout(coronaDebounce);
+    coronaDebounce = setTimeout(() => {
+      coronaPreview.src = e.target.value.trim();
+    }, 500);
+  });
+
   /* ---------------- Vestimenta: vista previa de imágenes personalizadas ---------------- */
   [
     ['vestIconoIzquierdoImagen', 'vestIconoIzquierdoImagenPreview'],
@@ -1296,6 +1334,14 @@ function iconoSvg(id, extraClass) {
     const escalaIlustracion = (typeof ilustracion.escala === 'number') ? ilustracion.escala : 100;
     rangoIlustracionEscala.value = escalaIlustracion;
     rangoIlustracionEscalaVal.textContent = escalaIlustracion + '%';
+
+    const corona = config.corona || {};
+    const coronaTipo = ['svg', 'imagen'].includes(corona.tipo) ? corona.tipo : 'svg';
+    const coronaInput = document.querySelector(`input[name="coronaTipo"][value="${coronaTipo}"]`);
+    if (coronaInput) coronaInput.checked = true;
+    cfgCoronaUrl.value = corona.imagenUrl || '';
+    coronaPreview.src = corona.imagenUrl || '';
+    actualizarCoronaCampos();
 
     const c = config.colores || {};
     document.getElementById('colBlush').value = c.blush || '#FBEAEE';
@@ -1400,6 +1446,10 @@ function iconoSvg(id, extraClass) {
         tipo: document.querySelector('input[name="ilustracionTipo"]:checked')?.value || 'svg',
         imagenUrl: cfgIlustracionUrl.value.trim(),
         escala: parseInt(rangoIlustracionEscala.value, 10)
+      },
+      corona: {
+        tipo: document.querySelector('input[name="coronaTipo"]:checked')?.value || 'svg',
+        imagenUrl: cfgCoronaUrl.value.trim()
       },
       fraseInvitacion: document.getElementById('cfgFraseInvitacion').value.trim(),
       fraseFecha: document.getElementById('cfgFraseFecha').value.trim(),

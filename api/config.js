@@ -47,6 +47,7 @@ function migrarIcono(valor) {
 // cargar URLs de Google Fonts arbitrarias ni romper el diseño con una
 // fuente que no combine.
 const ILUSTRACION_TIPOS_VALIDOS = ['svg', 'svg-detallado', 'imagen'];
+const CORONA_TIPOS_VALIDOS = ['svg', 'imagen'];
 const FUENTES_DISPLAY = ['Cormorant Garamond', 'Playfair Display', 'EB Garamond', 'Marcellus'];
 const FUENTES_SCRIPT = ['Alex Brush', 'Great Vibes', 'Parisienne', 'Dancing Script', 'Playball'];
 const FUENTES_BODY = ['Jost', 'Poppins', 'Montserrat', 'Lato'];
@@ -74,6 +75,10 @@ const DEFAULT_CONFIG = {
     tipo: 'svg',
     imagenUrl: '',
     escala: 100
+  },
+  corona: {
+    tipo: 'svg',
+    imagenUrl: ''
   },
   colores: {
     blush: '#FBEAEE',
@@ -332,6 +337,10 @@ function sanitizeConfig(body) {
       tipo: sanitizeChoice(b?.ilustracionQuinceanera?.tipo, ILUSTRACION_TIPOS_VALIDOS, d.ilustracionQuinceanera.tipo),
       imagenUrl: sanitizeUrl(b?.ilustracionQuinceanera?.imagenUrl, d.ilustracionQuinceanera.imagenUrl),
       escala: sanitizeEntero(b?.ilustracionQuinceanera?.escala, 30, 250, d.ilustracionQuinceanera.escala)
+    },
+    corona: {
+      tipo: sanitizeChoice(b?.corona?.tipo, CORONA_TIPOS_VALIDOS, d.corona.tipo),
+      imagenUrl: sanitizeUrl(b?.corona?.imagenUrl, d.corona.imagenUrl)
     },
     colores,
     tipografia,

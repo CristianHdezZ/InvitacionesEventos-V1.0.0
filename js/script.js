@@ -410,6 +410,26 @@ function renderIlustracionQuinceanera(cfg) {
   });
 }
 
+function renderCorona(cfg) {
+  const pares = [
+    { svg: document.getElementById('gateCoronaSvg'), img: document.getElementById('gateCoronaImg') },
+    { svg: document.getElementById('heroCoronaSvg'), img: document.getElementById('heroCoronaImg') }
+  ];
+  const src = cfg?.tipo === 'imagen' && cfg?.imagenUrl ? cfg.imagenUrl : null;
+
+  pares.forEach(({ svg, img }) => {
+    if (!svg || !img) return;
+    if (src) {
+      img.src = src;
+      img.hidden = false;
+      svg.style.display = 'none';
+    } else {
+      img.hidden = true;
+      svg.style.display = '';
+    }
+  });
+}
+
 function renderMusica(url) {
   const audio = document.getElementById('bgMusic');
   if (!audio || !url) return;
@@ -491,16 +511,17 @@ function iniciarLluviaSobres() {
 async function applyConfig() {
   try {
     const res = await fetch('/api/config');
-    if (!res.ok) { renderIlustracionQuinceanera(null); return null; }
+    if (!res.ok) { renderIlustracionQuinceanera(null); renderCorona(null); return null; }
     const data = await res.json();
     const config = data.config;
-    if (!config) { renderIlustracionQuinceanera(null); return null; }
+    if (!config) { renderIlustracionQuinceanera(null); renderCorona(null); return null; }
 
     renderTextos(config);
     renderFotoPrincipal(config.fotoPrincipal, config.nombre, config.apellido);
     renderLottieGate(config.lottieGate);
     renderMusica(config.musica);
     renderIlustracionQuinceanera(config.ilustracionQuinceanera);
+    renderCorona(config.corona);
     renderFecha(config.fechaEvento);
     applyColors(config.colores);
     applyTipografia(config.tipografia, config.estilos);
@@ -515,6 +536,7 @@ async function applyConfig() {
   } catch (err) {
     console.warn('No se pudo cargar la configuración dinámica; se usa el contenido por defecto del HTML.', err);
     renderIlustracionQuinceanera(null);
+    renderCorona(null);
     return null;
   }
 }
@@ -636,6 +658,26 @@ function mezclarColorHex(hex1, hex2, t) {
   return '#' + [r, g, b].map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
 }
 
+// Descarga una imagen (misma-origen o pública) y la convierte a data
+// URL para poder insertarla en el PDF. Si falla, devuelve null y quien
+// llama debe usar el respaldo vectorial.
+async function cargarImagenComoDataUrl(url) {
+  if (!url) return null;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const lector = new FileReader();
+      lector.onload = () => resolve(lector.result);
+      lector.onerror = () => resolve(null);
+      lector.readAsDataURL(blob);
+    });
+  } catch (err) {
+    return null;
+  }
+}
+
 // Pequeña corona dibujada con líneas y triángulos (sin depender de
 // glifos de fuente, que no siempre incluyen el símbolo de corona).
 function dibujarCoronaPdf(doc, cx, yBase, color) {
@@ -710,7 +752,21 @@ async function generarTarjetaPDF(nombreInvitado, config) {
   doc.setTextColor(oro);
   doc.text('Con la bendición de Dios y mi familia', cx, 16, { align: 'center' });
 
-  dibujarCoronaPdf(doc, cx, 25, oro);
+  let coronaImgDataUrl = null;
+  if (config?.corona?.tipo === 'imagen' && config?.corona?.imagenUrl) {
+    coronaImgDataUrl = await cargarImagenComoDataUrl(config.corona.imagenUrl);
+  }
+  if (coronaImgDataUrl) {
+    const coronaAncho = 20;
+    const coronaAlto = 14;
+    try {
+      doc.addImage(coronaImgDataUrl, cx - coronaAncho / 2, 25 - coronaAlto, coronaAncho, coronaAlto);
+    } catch (err) {
+      dibujarCoronaPdf(doc, cx, 25, oro);
+    }
+  } else {
+    dibujarCoronaPdf(doc, cx, 25, oro);
+  }
 
   const nombreCompleto = [config?.nombre, config?.apellido].filter(Boolean).join(' ') || 'Invitación';
   if (fuenteScriptDisponible) {
