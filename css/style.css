@@ -800,6 +800,18 @@ body.tarjetas-activas #detalles .ubicacion{
   transition:transform .3s var(--ease), box-shadow .3s var(--ease);
 }
 .modal__btn:hover{ transform:translateY(-2px); box-shadow:0 20px 38px -16px rgba(139,79,98,.8); }
+.modal__tarjeta-acciones{ display:flex; flex-direction:column; align-items:center; gap:10px; margin:0 0 20px; }
+.modal__tarjeta-status{ font-size:.82rem; color:var(--tinta-suave); font-style:italic; margin:0; }
+.modal__btn--ghost{
+  background:transparent; color:var(--vino); border:1px solid var(--oro);
+  box-shadow:none; padding:11px 32px;
+}
+.modal__btn--ghost:hover{ background:var(--blush); box-shadow:none; }
+.modal__btn--whatsapp{
+  background:#25D366; color:#fff; padding:11px 32px;
+  display:inline-flex; align-items:center; gap:8px; box-shadow:0 14px 30px -16px rgba(37,211,102,.7);
+}
+.modal__btn--whatsapp:hover{ box-shadow:0 20px 36px -16px rgba(37,211,102,.85); }
 @media (prefers-reduced-motion: reduce){
   .modal, .modal__card{ transition:none; }
   .modal.is-open .modal__icon{ animation:none; }

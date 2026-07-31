@@ -545,11 +545,310 @@ function cerrarModalRsvp(volverAlInicio) {
   modal.classList.remove('is-open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  const acciones = document.getElementById('rsvpTarjetaAcciones');
+  if (acciones) acciones.hidden = true;
   if (volverAlInicio) {
     const hero = document.getElementById('hero');
     if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
     else window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+}
+
+/* =========================================================
+   TARJETA DE INVITACIÓN EN PDF (color rosa, con QR de ubicación)
+   Se genera al confirmar asistencia y se ofrece para descargar
+   o compartir por WhatsApp (usa el selector nativo del celular
+   para adjuntar el archivo — no hay envío automático real sin
+   una cuenta de WhatsApp Business API de pago).
+   ========================================================= */
+function generarQRDataUrl(texto, tamano, colorOscuro) {
+  return new Promise((resolve) => {
+    if (typeof window.QRCode === 'undefined' || !texto) { resolve(null); return; }
+    const contenedor = document.createElement('div');
+    contenedor.style.cssText = 'position:absolute; left:-9999px; top:-9999px;';
+    document.body.appendChild(contenedor);
+    try {
+      // eslint-disable-next-line no-new
+      new window.QRCode(contenedor, { text: texto, width: tamano, height: tamano, colorDark: colorOscuro, colorLight: '#ffffff' });
+      requestAnimationFrame(() => {
+        const canvas = contenedor.querySelector('canvas');
+        const dataUrl = canvas ? canvas.toDataURL('image/png') : null;
+        contenedor.remove();
+        resolve(dataUrl);
+      });
+    } catch (err) {
+      contenedor.remove();
+      resolve(null);
+    }
+  });
+}
+
+// Fuente cursiva para el nombre de la tarjeta — se descarga una sola vez
+// y se guarda en caché; si falla (sin internet, CDN caído), la tarjeta
+// se genera igual con una fuente serif en cursiva como respaldo.
+let fuenteScriptTarjetaPromesa = null;
+function cargarFuenteScriptTarjeta(doc) {
+  if (!fuenteScriptTarjetaPromesa) {
+    fuenteScriptTarjetaPromesa = fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/greatvibes/GreatVibes-Regular.ttf')
+      .then((res) => { if (!res.ok) throw new Error('font fetch failed'); return res.arrayBuffer(); })
+      .then((buf) => {
+        let binario = '';
+        const bytes = new Uint8Array(buf);
+        const paso = 0x8000;
+        for (let i = 0; i < bytes.length; i += paso) {
+          binario += String.fromCharCode.apply(null, bytes.subarray(i, i + paso));
+        }
+        return btoa(binario);
+      })
+      .catch(() => null);
+  }
+  return fuenteScriptTarjetaPromesa.then((base64) => {
+    if (!base64) return false;
+    try {
+      doc.addFileToVFS('GreatVibes-Regular.ttf', base64);
+      doc.addFont('GreatVibes-Regular.ttf', 'GreatVibes', 'normal');
+      return true;
+    } catch (err) {
+      return false;
+    }
+  });
+}
+
+// Reduce el tamaño de fuente hasta que el texto quepa en el ancho
+// disponible (para nombres largos que si no se salen de los márgenes
+// de la tarjeta), sin bajar del tamaño mínimo legible.
+function ajustarFontSizeParaAncho(doc, texto, anchoMaxMm, tamanoInicial, tamanoMinimo) {
+  let tamano = tamanoInicial;
+  doc.setFontSize(tamano);
+  while (tamano > tamanoMinimo && doc.getTextWidth(texto) > anchoMaxMm) {
+    tamano -= 1;
+    doc.setFontSize(tamano);
+  }
+  return tamano;
+}
+
+function mezclarColorHex(hex1, hex2, t) {
+  const c1 = parseInt(hex1.slice(1), 16);
+  const c2 = parseInt(hex2.slice(1), 16);
+  const r = Math.round(((c1 >> 16) & 255) + (((c2 >> 16) & 255) - ((c1 >> 16) & 255)) * t);
+  const g = Math.round(((c1 >> 8) & 255) + (((c2 >> 8) & 255) - ((c1 >> 8) & 255)) * t);
+  const b = Math.round((c1 & 255) + ((c2 & 255) - (c1 & 255)) * t);
+  return '#' + [r, g, b].map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+}
+
+// Pequeña corona dibujada con líneas y triángulos (sin depender de
+// glifos de fuente, que no siempre incluyen el símbolo de corona).
+function dibujarCoronaPdf(doc, cx, yBase, color) {
+  doc.setDrawColor(color);
+  doc.setFillColor(color);
+  doc.setLineWidth(0.35);
+  doc.triangle(cx, yBase - 7, cx - 2.1, yBase, cx + 2.1, yBase, 'S');
+  doc.triangle(cx - 5.4, yBase - 5, cx - 5.4 - 2.1, yBase, cx - 5.4 + 2.1, yBase, 'S');
+  doc.triangle(cx + 5.4, yBase - 5, cx + 5.4 - 2.1, yBase, cx + 5.4 + 2.1, yBase, 'S');
+  doc.line(cx - 7.5, yBase, cx + 7.5, yBase);
+  doc.circle(cx, yBase - 7, 0.55, 'F');
+}
+
+// Divisor delicado: dos líneas finas con un pequeño diamante al centro.
+function dibujarDivisorPdf(doc, cx, y, mitadAncho, color) {
+  doc.setDrawColor(color);
+  doc.setLineWidth(0.25);
+  doc.line(cx - mitadAncho, y, cx - 2.6, y);
+  doc.line(cx + 2.6, y, cx + mitadAncho, y);
+  doc.line(cx - 1.6, y, cx, y - 1.6);
+  doc.line(cx, y - 1.6, cx + 1.6, y);
+  doc.line(cx + 1.6, y, cx, y + 1.6);
+  doc.line(cx, y + 1.6, cx - 1.6, y);
+}
+
+// Marcas de esquina en "L" en vez de un recuadro completo — un marco
+// más delicado, típico de tarjetería fina.
+function dibujarEsquinasPdf(doc, color, ancho, alto) {
+  const largo = 9;
+  const margen = 6;
+  doc.setDrawColor(color);
+  doc.setLineWidth(0.5);
+  doc.line(margen, margen, margen + largo, margen);
+  doc.line(margen, margen, margen, margen + largo);
+  doc.line(ancho - margen, margen, ancho - margen - largo, margen);
+  doc.line(ancho - margen, margen, ancho - margen, margen + largo);
+  doc.line(margen, alto - margen, margen + largo, alto - margen);
+  doc.line(margen, alto - margen, margen, alto - margen - largo);
+  doc.line(ancho - margen, alto - margen, ancho - margen - largo, alto - margen);
+  doc.line(ancho - margen, alto - margen, ancho - margen, alto - margen - largo);
+}
+
+async function generarTarjetaPDF(nombreInvitado, config) {
+  if (typeof window.jspdf === 'undefined') return null;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: [100, 150] });
+
+  const anchoCard = 100;
+  const altoCard = 150;
+  const cx = anchoCard / 2;
+
+  const rosaClarita = '#FDF3F6';
+  const rosaProfunda = '#F3D3DE';
+  const oro = '#B8935C';
+  const vino = '#6B3A4A';
+  const tintaSuave = '#8A6B75';
+
+  // -- Fondo con degradé suave (rosa muy claro arriba -> rosa más
+  // intenso abajo), simulado con bandas finas superpuestas. --
+  const bandas = 30;
+  for (let i = 0; i < bandas; i++) {
+    const t = i / (bandas - 1);
+    doc.setFillColor(mezclarColorHex(rosaClarita, rosaProfunda, t));
+    doc.rect(0, (altoCard / bandas) * i, anchoCard, altoCard / bandas + 0.6, 'F');
+  }
+  dibujarEsquinasPdf(doc, oro, anchoCard, altoCard);
+
+  const fuenteScriptDisponible = await cargarFuenteScriptTarjeta(doc).catch(() => false);
+
+  doc.setFont('times', 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(oro);
+  doc.text('Con la bendición de Dios y mi familia', cx, 18, { align: 'center' });
+
+  dibujarCoronaPdf(doc, cx, 27, oro);
+
+  const nombreCompleto = [config?.nombre, config?.apellido].filter(Boolean).join(' ') || 'Invitación';
+  if (fuenteScriptDisponible) {
+    doc.setFont('GreatVibes', 'normal');
+    ajustarFontSizeParaAncho(doc, nombreCompleto, 84, 40, 16);
+  } else {
+    doc.setFont('times', 'bolditalic');
+    ajustarFontSizeParaAncho(doc, nombreCompleto, 82, 28, 10);
+  }
+  doc.setTextColor(vino);
+  doc.text(nombreCompleto, cx, 40, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10.5);
+  doc.setTextColor(oro);
+  doc.text('X V   A Ñ O S', cx, 47, { align: 'center' });
+
+  dibujarDivisorPdf(doc, cx, 52.5, 15, oro);
+
+  let fechaTexto = '';
+  const fecha = config?.fechaEvento ? new Date(config.fechaEvento) : null;
+  if (fecha && !isNaN(fecha.getTime())) {
+    fechaTexto = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    fechaTexto = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
+  }
+  doc.setFont('times', 'italic');
+  doc.setFontSize(9.5);
+  doc.setTextColor(vino);
+  doc.text(fechaTexto, cx, 59, { align: 'center' });
+
+  doc.setFillColor('#FEFAFB');
+  doc.setDrawColor(oro);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(12, 66, 76, 18, 4, 4, 'FD');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(oro);
+  doc.text('I N V I T A D O', cx, 72.5, { align: 'center' });
+  const nombreInvitadoTexto = nombreInvitado || 'Invitado especial';
+  doc.setFont(fuenteScriptDisponible ? 'GreatVibes' : 'times', fuenteScriptDisponible ? 'normal' : 'italic');
+  ajustarFontSizeParaAncho(doc, nombreInvitadoTexto, 70, fuenteScriptDisponible ? 20 : 13, fuenteScriptDisponible ? 11 : 7);
+  doc.setTextColor(vino);
+  doc.text(nombreInvitadoTexto, cx, 81, { align: 'center' });
+
+  const ubicacion = config?.ubicacion || {};
+  let y = 94;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(vino);
+  doc.text(ubicacion.nombreLugar || '', cx, y, { align: 'center', maxWidth: 82 });
+  y += 6;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(tintaSuave);
+  const direccionLines = ubicacion.direccion ? doc.splitTextToSize(ubicacion.direccion, 78) : [];
+  if (direccionLines.length) doc.text(direccionLines, cx, y, { align: 'center' });
+  y += direccionLines.length * 3.8 + 4;
+
+  if (ubicacion.hora) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(oro);
+    doc.text('Hora: ' + ubicacion.hora, cx, y, { align: 'center' });
+    y += 8;
+  } else {
+    y += 2;
+  }
+
+  if (ubicacion.mapaLink) {
+    const qrTamanoMm = 28;
+    const qrX = cx - qrTamanoMm / 2;
+    const qrDataUrl = await generarQRDataUrl(ubicacion.mapaLink, 240, vino);
+    if (qrDataUrl) {
+      const marco = 2;
+      doc.setDrawColor(oro);
+      doc.setLineWidth(0.3);
+      doc.setFillColor('#ffffff');
+      doc.roundedRect(qrX - marco, y - marco, qrTamanoMm + marco * 2, qrTamanoMm + marco * 2, 2, 2, 'FD');
+      doc.addImage(qrDataUrl, 'PNG', qrX, y, qrTamanoMm, qrTamanoMm);
+      doc.setFont('times', 'italic');
+      doc.setFontSize(6.5);
+      doc.setTextColor(oro);
+      doc.text('Escanea para ver cómo llegar', cx, y + qrTamanoMm + 6, { align: 'center' });
+    }
+  }
+
+  return doc.output('blob');
+}
+
+function prepararTarjetaInvitacion(nombreInvitado, config) {
+  const acciones = document.getElementById('rsvpTarjetaAcciones');
+  const statusTxt = document.getElementById('rsvpTarjetaStatus');
+  const descargarBtn = document.getElementById('rsvpDescargarBtn');
+  const whatsappBtn = document.getElementById('rsvpWhatsappBtn');
+  if (!acciones) return;
+
+  acciones.hidden = false;
+  if (statusTxt) { statusTxt.hidden = false; statusTxt.textContent = 'Preparando tu tarjeta de invitación…'; }
+  if (descargarBtn) descargarBtn.hidden = true;
+  if (whatsappBtn) whatsappBtn.hidden = true;
+
+  generarTarjetaPDF(nombreInvitado, config).then((blob) => {
+    if (!blob) {
+      if (statusTxt) statusTxt.textContent = 'No se pudo preparar la tarjeta esta vez, pero tu confirmación ya quedó registrada.';
+      return;
+    }
+    if (statusTxt) statusTxt.hidden = true;
+
+    const nombreArchivo = 'Invitacion-XV-' + (nombreInvitado || 'invitado').trim().replace(/\s+/g, '-') + '.pdf';
+    const blobUrl = URL.createObjectURL(blob);
+
+    if (descargarBtn) {
+      descargarBtn.hidden = false;
+      descargarBtn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+    }
+
+    if (whatsappBtn) {
+      let archivo = null;
+      try { archivo = new File([blob], nombreArchivo, { type: 'application/pdf' }); } catch (err) { /* File no soportado */ }
+      const puedeCompartirArchivo = archivo && typeof navigator.canShare === 'function' && navigator.canShare({ files: [archivo] });
+      if (puedeCompartirArchivo) {
+        whatsappBtn.hidden = false;
+        whatsappBtn.onclick = async () => {
+          try {
+            await navigator.share({ files: [archivo], title: 'Mi invitación', text: '¡Ahí va mi tarjeta de invitación! 💕' });
+          } catch (err) { /* el usuario canceló el share, o no fue posible */ }
+        };
+      }
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -938,6 +1237,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         setStatus(mensajeOk, 'ok');
         rsvpForm.reset();
         abrirModalRsvp(mensajeOk, data.asistencia === 'si');
+
+        if (data.asistencia === 'si') {
+          prepararTarjetaInvitacion(data.nombre, config);
+        }
 
         // -- Canvas Confetti: celebración al confirmar asistencia --
         if (data.asistencia === 'si' && typeof confetti === 'function') {
