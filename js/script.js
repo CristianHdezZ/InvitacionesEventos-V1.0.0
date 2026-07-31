@@ -708,27 +708,27 @@ async function generarTarjetaPDF(nombreInvitado, config) {
   doc.setFont('times', 'italic');
   doc.setFontSize(9);
   doc.setTextColor(oro);
-  doc.text('Con la bendición de Dios y mi familia', cx, 18, { align: 'center' });
+  doc.text('Con la bendición de Dios y mi familia', cx, 16, { align: 'center' });
 
-  dibujarCoronaPdf(doc, cx, 27, oro);
+  dibujarCoronaPdf(doc, cx, 25, oro);
 
   const nombreCompleto = [config?.nombre, config?.apellido].filter(Boolean).join(' ') || 'Invitación';
   if (fuenteScriptDisponible) {
     doc.setFont('GreatVibes', 'normal');
-    ajustarFontSizeParaAncho(doc, nombreCompleto, 84, 40, 16);
+    ajustarFontSizeParaAncho(doc, nombreCompleto, 84, 38, 16);
   } else {
     doc.setFont('times', 'bolditalic');
-    ajustarFontSizeParaAncho(doc, nombreCompleto, 82, 28, 10);
+    ajustarFontSizeParaAncho(doc, nombreCompleto, 82, 26, 10);
   }
   doc.setTextColor(vino);
-  doc.text(nombreCompleto, cx, 40, { align: 'center' });
+  doc.text(nombreCompleto, cx, 37, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10.5);
+  doc.setFontSize(10);
   doc.setTextColor(oro);
-  doc.text('X V   A Ñ O S', cx, 47, { align: 'center' });
+  doc.text('X V   A Ñ O S', cx, 44, { align: 'center' });
 
-  dibujarDivisorPdf(doc, cx, 52.5, 15, oro);
+  dibujarDivisorPdf(doc, cx, 49, 15, oro);
 
   let fechaTexto = '';
   const fecha = config?.fechaEvento ? new Date(config.fechaEvento) : null;
@@ -737,64 +737,69 @@ async function generarTarjetaPDF(nombreInvitado, config) {
     fechaTexto = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
   }
   doc.setFont('times', 'italic');
-  doc.setFontSize(9.5);
+  doc.setFontSize(9);
   doc.setTextColor(vino);
-  doc.text(fechaTexto, cx, 59, { align: 'center' });
+  doc.text(fechaTexto, cx, 55, { align: 'center' });
 
   doc.setFillColor('#FEFAFB');
   doc.setDrawColor(oro);
   doc.setLineWidth(0.3);
-  doc.roundedRect(12, 66, 76, 18, 4, 4, 'FD');
+  doc.roundedRect(12, 61, 76, 16, 4, 4, 'FD');
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.setTextColor(oro);
-  doc.text('I N V I T A D O', cx, 72.5, { align: 'center' });
+  doc.text('I N V I T A D O', cx, 66.5, { align: 'center' });
   const nombreInvitadoTexto = nombreInvitado || 'Invitado especial';
   doc.setFont(fuenteScriptDisponible ? 'GreatVibes' : 'times', fuenteScriptDisponible ? 'normal' : 'italic');
-  ajustarFontSizeParaAncho(doc, nombreInvitadoTexto, 70, fuenteScriptDisponible ? 20 : 13, fuenteScriptDisponible ? 11 : 7);
+  ajustarFontSizeParaAncho(doc, nombreInvitadoTexto, 70, fuenteScriptDisponible ? 18 : 12, fuenteScriptDisponible ? 11 : 7);
   doc.setTextColor(vino);
-  doc.text(nombreInvitadoTexto, cx, 81, { align: 'center' });
+  doc.text(nombreInvitadoTexto, cx, 74, { align: 'center' });
 
+  // Todo lo que sigue (lugar, dirección, hora, leyenda y QR) se dibuja
+  // en un solo flujo de arriba hacia abajo — así nunca se pisan entre
+  // sí, sin importar cuántas líneas ocupe la dirección.
   const ubicacion = config?.ubicacion || {};
-  let y = 94;
+  let y = 84;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(vino);
   doc.text(ubicacion.nombreLugar || '', cx, y, { align: 'center', maxWidth: 82 });
-  y += 6;
+  y += 5.5;
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(tintaSuave);
   const direccionLines = ubicacion.direccion ? doc.splitTextToSize(ubicacion.direccion, 78) : [];
   if (direccionLines.length) doc.text(direccionLines, cx, y, { align: 'center' });
-  y += direccionLines.length * 3.8 + 4;
+  y += direccionLines.length * 3.6 + 3;
 
   if (ubicacion.hora) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(oro);
     doc.text('Hora: ' + ubicacion.hora, cx, y, { align: 'center' });
-    y += 8;
+    y += 7;
   } else {
     y += 2;
   }
 
   if (ubicacion.mapaLink) {
-    const qrTamanoMm = 28;
-    const qrX = cx - qrTamanoMm / 2;
+    const qrTamanoMm = 26;
+    const marco = 1.8;
     const qrDataUrl = await generarQRDataUrl(ubicacion.mapaLink, 240, vino);
     if (qrDataUrl) {
-      const marco = 2;
+      doc.setFont('times', 'italic');
+      doc.setFontSize(6.5);
+      doc.setTextColor(oro);
+      doc.text('Escanea para ver cómo llegar', cx, y, { align: 'center' });
+      y += 5;
+
+      const qrX = cx - qrTamanoMm / 2;
       doc.setDrawColor(oro);
       doc.setLineWidth(0.3);
       doc.setFillColor('#ffffff');
       doc.roundedRect(qrX - marco, y - marco, qrTamanoMm + marco * 2, qrTamanoMm + marco * 2, 2, 2, 'FD');
       doc.addImage(qrDataUrl, 'PNG', qrX, y, qrTamanoMm, qrTamanoMm);
-      doc.setFont('times', 'italic');
-      doc.setFontSize(6.5);
-      doc.setTextColor(oro);
-      doc.text('Escanea para ver cómo llegar', cx, y + qrTamanoMm + 6, { align: 'center' });
     }
   }
 
