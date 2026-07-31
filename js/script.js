@@ -410,6 +410,52 @@ function renderIlustracionQuinceanera(cfg) {
   });
 }
 
+// Muchos PNG de coronas traen bastante margen transparente alrededor
+// del dibujo real (efecto de sombra, decoración, etc.). Esto mide ese
+// margen analizando el canal alfa, para poder compensarlo tanto en el
+// sitio (el regulador de espacio) como en la tarjeta PDF (que la corona
+// no quede pegada/encima del texto de arriba). Si la imagen es de otro
+// dominio sin CORS, el canvas queda "manchado" y esto falla en
+// silencio — el resto del sitio sigue funcionando igual que antes.
+function medirRecorteAlfa(src) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const tam = 200;
+        const canvas = document.createElement('canvas');
+        canvas.width = tam;
+        canvas.height = tam;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(im, 0, 0, tam, tam);
+        const { data } = ctx.getImageData(0, 0, tam, tam);
+        let minY = tam;
+        let maxY = 0;
+        for (let y = 0; y < tam; y++) {
+          for (let x = 0; x < tam; x++) {
+            if (data[(y * tam + x) * 4 + 3] > 10) {
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        if (maxY < minY) { resolve(null); return; }
+        resolve({
+          topFrac: minY / tam,
+          bottomFrac: (tam - 1 - maxY) / tam,
+          naturalWidth: im.naturalWidth,
+          naturalHeight: im.naturalHeight
+        });
+      } catch (err) {
+        resolve(null);
+      }
+    };
+    im.onerror = () => resolve(null);
+    im.src = src;
+  });
+}
+
 function renderCorona(cfg) {
   const escala = Number(cfg?.escala);
   document.documentElement.style.setProperty('--corona-escala', Number.isFinite(escala) && escala > 0 ? escala / 100 : 1);
@@ -426,8 +472,21 @@ function renderCorona(cfg) {
       img.src = src;
       img.hidden = false;
       svg.style.display = 'none';
+      img.style.marginBottom = '';
+      // Compensa el margen transparente inferior del PNG para que el
+      // regulador de "espacio entre la corona y el nombre" represente
+      // el espacio realmente visible, no el espacio + el aire del PNG.
+      medirRecorteAlfa(src).then((recorte) => {
+        if (!recorte || img.src.indexOf(src) === -1) return;
+        requestAnimationFrame(() => {
+          const alturaRenderizada = img.getBoundingClientRect().height;
+          const paddingInferiorPx = recorte.bottomFrac * alturaRenderizada;
+          img.style.marginBottom = `calc(var(--espacio-corona, 14px) - ${paddingInferiorPx.toFixed(1)}px)`;
+        });
+      });
     } else {
       img.hidden = true;
+      img.style.marginBottom = '';
       svg.style.display = '';
     }
   });
@@ -681,6 +740,65 @@ async function cargarImagenComoDataUrl(url) {
   }
 }
 
+// Recorta el margen transparente que traen muchos PNG de corona y de
+// paso reduce el tamaño (para que la tarjeta no pese decenas de MB si
+// alguien sube una imagen de varios miles de píxeles). Devuelve un PNG
+// pequeño ya ajustado al dibujo real, listo para insertar en el PDF.
+function recortarImagenParaPdf(src, anchoMaximoPx) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const tamMedida = 200;
+        const medida = document.createElement('canvas');
+        medida.width = tamMedida;
+        medida.height = tamMedida;
+        const ctxMedida = medida.getContext('2d');
+        ctxMedida.drawImage(im, 0, 0, tamMedida, tamMedida);
+        const { data } = ctxMedida.getImageData(0, 0, tamMedida, tamMedida);
+        let minX = tamMedida;
+        let minY = tamMedida;
+        let maxX = 0;
+        let maxY = 0;
+        for (let y = 0; y < tamMedida; y++) {
+          for (let x = 0; x < tamMedida; x++) {
+            if (data[(y * tamMedida + x) * 4 + 3] > 10) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        if (maxX < minX || maxY < minY) { resolve(null); return; }
+
+        const escalaX = im.naturalWidth / tamMedida;
+        const escalaY = im.naturalHeight / tamMedida;
+        const margen = 0.04;
+        const anchoContenido = (maxX - minX) * escalaX;
+        const altoContenido = (maxY - minY) * escalaY;
+        const sx = Math.max(0, minX * escalaX - anchoContenido * margen);
+        const sy = Math.max(0, minY * escalaY - altoContenido * margen);
+        const sw = Math.min(im.naturalWidth - sx, anchoContenido * (1 + margen * 2));
+        const sh = Math.min(im.naturalHeight - sy, altoContenido * (1 + margen * 2));
+
+        const anchoSalida = Math.min(anchoMaximoPx, sw);
+        const altoSalida = Math.round(anchoSalida * (sh / sw));
+        const salida = document.createElement('canvas');
+        salida.width = anchoSalida;
+        salida.height = altoSalida;
+        salida.getContext('2d').drawImage(im, sx, sy, sw, sh, 0, 0, anchoSalida, altoSalida);
+        resolve({ dataUrl: salida.toDataURL('image/png'), width: sw, height: sh });
+      } catch (err) {
+        resolve(null);
+      }
+    };
+    im.onerror = () => resolve(null);
+    im.src = src;
+  });
+}
+
 // Pequeña corona dibujada con líneas y triángulos (sin depender de
 // glifos de fuente, que no siempre incluyen el símbolo de corona).
 function dibujarCoronaPdf(doc, cx, yBase, color) {
@@ -755,15 +873,18 @@ async function generarTarjetaPDF(nombreInvitado, config) {
   doc.setTextColor(oro);
   doc.text('Con la bendición de Dios y mi familia', cx, 16, { align: 'center' });
 
-  let coronaImgDataUrl = null;
+  let coronaRecortada = null;
   if (config?.corona?.tipo === 'imagen' && config?.corona?.imagenUrl) {
-    coronaImgDataUrl = await cargarImagenComoDataUrl(config.corona.imagenUrl);
+    coronaRecortada = await recortarImagenParaPdf(config.corona.imagenUrl, 320);
   }
-  if (coronaImgDataUrl) {
-    const coronaAncho = 20;
-    const coronaAlto = 14;
+  if (coronaRecortada) {
     try {
-      doc.addImage(coronaImgDataUrl, cx - coronaAncho / 2, 25 - coronaAlto, coronaAncho, coronaAlto);
+      // La imagen ya viene recortada al dibujo real (sin el margen
+      // transparente que traen muchos PNG de corona), así que solo hay
+      // que ubicarla con espacio suficiente debajo del texto de arriba.
+      const altoDeseado = 11;
+      const anchoDeseado = altoDeseado * (coronaRecortada.width / coronaRecortada.height);
+      doc.addImage(coronaRecortada.dataUrl, cx - anchoDeseado / 2, 19, anchoDeseado, altoDeseado);
     } catch (err) {
       dibujarCoronaPdf(doc, cx, 25, oro);
     }
