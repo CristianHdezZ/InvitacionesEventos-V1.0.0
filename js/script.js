@@ -862,7 +862,19 @@ async function generarTarjetaPDF(nombreInvitado, config) {
   return doc.output('blob');
 }
 
-function prepararTarjetaInvitacion(nombreInvitado, config) {
+// Arma el link de WhatsApp con el teléfono que la persona escribió en
+// el formulario, para abrir el chat directamente con ella (no un
+// selector genérico). Si no trae indicativo de país, asume Colombia
+// (+57) — el formulario pide el número local de 10 dígitos.
+function construirLinkWhatsapp(telefono) {
+  if (!telefono) return null;
+  const soloDigitos = telefono.replace(/\D/g, '');
+  if (!soloDigitos) return null;
+  const conIndicativo = soloDigitos.length === 10 ? '57' + soloDigitos : soloDigitos;
+  return 'https://api.whatsapp.com/send/?phone=' + conIndicativo;
+}
+
+function prepararTarjetaInvitacion(nombreInvitado, config, telefonoInvitado) {
   const acciones = document.getElementById('rsvpTarjetaAcciones');
   const statusTxt = document.getElementById('rsvpTarjetaStatus');
   const descargarBtn = document.getElementById('rsvpDescargarBtn');
@@ -897,15 +909,11 @@ function prepararTarjetaInvitacion(nombreInvitado, config) {
     }
 
     if (whatsappBtn) {
-      let archivo = null;
-      try { archivo = new File([blob], nombreArchivo, { type: 'application/pdf' }); } catch (err) { /* File no soportado */ }
-      const puedeCompartirArchivo = archivo && typeof navigator.canShare === 'function' && navigator.canShare({ files: [archivo] });
-      if (puedeCompartirArchivo) {
+      const linkWhatsapp = construirLinkWhatsapp(telefonoInvitado);
+      if (linkWhatsapp) {
         whatsappBtn.hidden = false;
-        whatsappBtn.onclick = async () => {
-          try {
-            await navigator.share({ files: [archivo], title: 'Mi invitación', text: '¡Ahí va mi tarjeta de invitación! 💕' });
-          } catch (err) { /* el usuario canceló el share, o no fue posible */ }
+        whatsappBtn.onclick = () => {
+          window.open(linkWhatsapp, '_blank', 'noopener');
         };
       }
     }
@@ -1300,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         abrirModalRsvp(mensajeOk, data.asistencia === 'si');
 
         if (data.asistencia === 'si') {
-          prepararTarjetaInvitacion(data.nombre, config);
+          prepararTarjetaInvitacion(data.nombre, config, data.telefono);
         }
 
         // -- Canvas Confetti: celebración al confirmar asistencia --
