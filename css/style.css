@@ -600,9 +600,8 @@ body.tarjetas-activas #detalles .ubicacion{
 .btn-link svg{ width:16px; height:16px; flex:0 0 auto; opacity:.9; }
 
 /* ÁLBUM COMPARTIDO */
-.album-regalo{ padding:var(--section-gap) 6vw; background:linear-gradient(180deg, var(--blush) 0%, transparent 100%); }
 .album-regalo__inner{
-  max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr; align-items:center; gap:36px;
+  max-width:var(--container); margin:44px auto 0; display:grid; grid-template-columns:1fr; align-items:center; gap:36px;
 }
 .album-regalo__copy{ text-align:center; }
 .album-regalo__invita{ margin:0 0 clamp(16px, 2.4vw, 28px); color:var(--rosa-deep); font-family:var(--f-script); font-size:clamp(2.4rem, 5.2vw, 4.4rem); line-height:1; }
@@ -682,9 +681,15 @@ body.tarjetas-activas #detalles .ubicacion{
 .footer{ text-align:center; padding:var(--section-gap) 6vw clamp(40px, 6vh, 64px); color:var(--tinta-suave); font-size:.85rem; }
 .footer__ornament{ color:var(--oro); font-size:1.4rem; margin-bottom:10px; }
 .footer__mensaje{ margin:0 0 4px; }
-.footer__hashtag{ display:inline-block; margin-top:6px; color:var(--rosa-deep); letter-spacing:.14em; text-transform:uppercase; font-size:.72rem; text-decoration:none; border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease); }
+.ig-hashtag{ display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+.ig-hashtag__icon{ width:16px; height:16px; flex:0 0 auto; }
+.footer__hashtag{ margin-top:6px; color:var(--rosa-deep); letter-spacing:.14em; text-transform:uppercase; font-size:.72rem; border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease); }
 .footer__hashtag:focus-visible{ color:var(--rosa-oscuro, var(--vino)); border-color:currentColor; }
 @media (hover:hover){ .footer__hashtag:hover{ color:var(--rosa-oscuro, var(--vino)); border-color:currentColor; } }
+.album-regalo__hashtag .ig-hashtag{ color:var(--rosa-deep); border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease); }
+.album-regalo__hashtag .ig-hashtag__icon{ width:.72em; height:.72em; }
+.album-regalo__hashtag .ig-hashtag:focus-visible{ color:var(--vino); border-color:currentColor; }
+@media (hover:hover){ .album-regalo__hashtag .ig-hashtag:hover{ color:var(--vino); border-color:currentColor; } }
 .footer__credits{ margin-top:14px; font-size:.62rem; color:var(--tinta-suave); opacity:.55; letter-spacing:.02em; }
 .footer__credits a{ color:inherit; text-decoration:none; border-bottom:1px solid currentColor; }
 

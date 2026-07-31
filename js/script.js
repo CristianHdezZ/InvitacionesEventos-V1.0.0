@@ -278,13 +278,19 @@ function renderTextos(config) {
   if (config.nombre) setText('.carta__firma', 'Con cariño, ' + config.nombre);
   setText('.footer__mensaje', config.footerMensaje);
 
-  const hashtagEl = document.getElementById('footerHashtagLink');
-  if (hashtagEl && config.hashtag) {
-    hashtagEl.textContent = config.hashtag;
+  if (config.hashtag) {
     const slug = config.hashtag.replace(/^#/, '').trim().replace(/\s+/g, '');
-    hashtagEl.href = slug
-      ? `https://www.instagram.com/explore/tags/${encodeURIComponent(slug)}/`
-      : '#';
+    const igUrl = slug ? `https://www.instagram.com/explore/tags/${encodeURIComponent(slug)}/` : '#';
+
+    const footerHashtagLink = document.getElementById('footerHashtagLink');
+    const footerHashtagText = document.getElementById('footerHashtagText');
+    if (footerHashtagText) footerHashtagText.textContent = config.hashtag;
+    if (footerHashtagLink) footerHashtagLink.href = igUrl;
+
+    const albumHashtagLink = document.getElementById('albumHashtagLink');
+    const albumHashtagText = document.getElementById('albumHashtagText');
+    if (albumHashtagText) albumHashtagText.textContent = config.hashtag;
+    if (albumHashtagLink) albumHashtagLink.href = igUrl;
   }
 }
 
