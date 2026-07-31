@@ -472,6 +472,12 @@
     <div class="field"><label for="cfgHoraLugar">Hora</label><input type="text" id="cfgHoraLugar" placeholder="7:00 p.m.">
       <div data-estilo-slot="ubicacionHora"></div></div>
     <div class="field">
+      <label class="switch-label">
+        <input type="checkbox" id="cfgMostrarMapa" checked>
+        Mostrar el mapa en la invitación
+      </label>
+    </div>
+    <div class="field">
       <label for="cfgMapaEmbed">URL de mapa incrustado (Google Maps → Compartir → Insertar mapa)</label>
       <input type="text" id="cfgMapaEmbed" placeholder="https://www.google.com/maps/embed?...">
     </div>
@@ -489,6 +495,12 @@
       </div>
     </div>
     <div class="field" style="margin-top:14px;">
+      <label class="switch-label">
+        <input type="checkbox" id="cfgMostrarStreetView" checked>
+        Mostrar Street View en la invitación
+      </label>
+    </div>
+    <div class="field">
       <label for="cfgStreetView">URL de Street View incrustado (Google Maps → Street View → Compartir → Insertar mapa)</label>
       <input type="text" id="cfgStreetView" placeholder="https://www.google.com/maps/embed?pb=...">
     </div>
@@ -1352,6 +1364,8 @@ function iconoSvg(id, extraClass) {
     document.getElementById('cfgMapaEmbed').value = u.mapaEmbedUrl || '';
     document.getElementById('cfgMapaLink').value = u.mapaLink || '';
     document.getElementById('cfgStreetView').value = u.streetViewUrl || '';
+    document.getElementById('cfgMostrarMapa').checked = u.mostrarMapa !== false;
+    document.getElementById('cfgMostrarStreetView').checked = u.mostrarStreetView !== false;
     updateMapaPreview();
     updateStreetViewPreview();
 
@@ -1448,7 +1462,9 @@ function iconoSvg(id, extraClass) {
         hora: document.getElementById('cfgHoraLugar').value.trim(),
         mapaEmbedUrl: document.getElementById('cfgMapaEmbed').value.trim(),
         streetViewUrl: document.getElementById('cfgStreetView').value.trim(),
-        mapaLink: document.getElementById('cfgMapaLink').value.trim()
+        mapaLink: document.getElementById('cfgMapaLink').value.trim(),
+        mostrarMapa: document.getElementById('cfgMostrarMapa').checked,
+        mostrarStreetView: document.getElementById('cfgMostrarStreetView').checked
       },
       galeria: [...galeriaRows.querySelectorAll('.gal-url')].map(inp => inp.value.trim()).filter(Boolean)
     };

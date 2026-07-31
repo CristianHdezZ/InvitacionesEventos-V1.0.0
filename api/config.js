@@ -133,7 +133,9 @@ const DEFAULT_CONFIG = {
     hora: '7:00 p.m.',
     mapaEmbedUrl: 'https://www.google.com/maps?q=6.1887244,-75.3635988&z=17&output=embed',
     streetViewUrl: 'https://www.google.com/maps/embed?pb=!4v1784564524946!6m8!1m7!1sCOvTRbTPuU5mPLvsMMZbUw!2m2!1d6.188724376340286!2d-75.36359884954642!3f325.46288285307287!4f8.27229985678568!5f0.7820865974627469',
-    mapaLink: 'https://www.google.com/maps/dir/?api=1&destination=6.1887244,-75.3635988'
+    mapaLink: 'https://www.google.com/maps/dir/?api=1&destination=6.1887244,-75.3635988',
+    mostrarMapa: true,
+    mostrarStreetView: true
   },
   galeria: [
     'assets/gallery/image01.jpeg',
@@ -303,7 +305,9 @@ function sanitizeConfig(body) {
     hora: sanitizeText(b?.ubicacion?.hora, 30, d.ubicacion.hora),
     mapaEmbedUrl: sanitizeUrl(mapaEmbedEntrante, d.ubicacion.mapaEmbedUrl),
     streetViewUrl: sanitizeUrl(streetViewEntrante, d.ubicacion.streetViewUrl),
-    mapaLink: sanitizeUrl(b?.ubicacion?.mapaLink, d.ubicacion.mapaLink)
+    mapaLink: sanitizeUrl(b?.ubicacion?.mapaLink, d.ubicacion.mapaLink),
+    mostrarMapa: typeof b?.ubicacion?.mostrarMapa === 'boolean' ? b.ubicacion.mostrarMapa : d.ubicacion.mostrarMapa,
+    mostrarStreetView: typeof b?.ubicacion?.mostrarStreetView === 'boolean' ? b.ubicacion.mostrarStreetView : d.ubicacion.mostrarStreetView
   };
 
   let fechaEvento = d.fechaEvento;

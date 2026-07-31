@@ -338,6 +338,8 @@ function renderUbicacion(ubicacion) {
   const p = document.querySelector('.ubicacion__direccion');
   const mapaFrame = document.getElementById('mapaEstaticoFrame');
   const streetViewFrame = document.getElementById('mapaStreetViewFrame');
+  const mapaBlock = document.getElementById('ubicacionMapaBlock');
+  const streetViewBlock = document.getElementById('ubicacionStreetViewBlock');
   const link = document.querySelector('.btn-link');
   const iconoLink = document.getElementById('ubicacionIconoLink');
 
@@ -348,6 +350,8 @@ function renderUbicacion(ubicacion) {
   }
   if (mapaFrame && ubicacion.mapaEmbedUrl) mapaFrame.src = ubicacion.mapaEmbedUrl;
   if (streetViewFrame && ubicacion.streetViewUrl) streetViewFrame.src = ubicacion.streetViewUrl;
+  if (mapaBlock) mapaBlock.hidden = ubicacion.mostrarMapa === false;
+  if (streetViewBlock) streetViewBlock.hidden = ubicacion.mostrarStreetView === false;
   if (link && ubicacion.mapaLink) link.href = ubicacion.mapaLink;
   if (iconoLink && ubicacion.mapaLink) iconoLink.href = ubicacion.mapaLink;
 }
@@ -610,6 +614,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       { threshold: 0.35 }
     );
     iconosRepetibles.forEach((el) => iconoRepetibleObserver.observe(el));
+  }
+
+  // -- Estrella del recuadro de la fecha: explota en chispas cada vez
+  // que se llega a la portada (se reinicia forzando un reflow para que
+  // la animación pueda repetirse, no solo tocarla la primera vez). --
+  const heroBadge = document.querySelector('.hero__badge');
+  if (heroBadge) {
+    const badgeBurstObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('is-bursting');
+            void entry.target.offsetWidth;
+            entry.target.classList.add('is-bursting');
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+    badgeBurstObserver.observe(heroBadge);
   }
 
   // -- Swiper: carrusel de la galería --
