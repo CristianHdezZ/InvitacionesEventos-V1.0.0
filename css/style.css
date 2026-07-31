@@ -287,6 +287,14 @@ body.tarjetas-activas .section-badge{
   background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
   color:var(--icono, var(--vino));
   box-shadow:0 16px 32px -14px rgba(139,79,98,.55), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.22);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), color .3s var(--ease);
+}
+@media (hover:hover){
+  body.tarjetas-activas .section-badge:hover{
+    transform:translateY(-50%) scale(1.1);
+    box-shadow:0 20px 38px -14px rgba(139,79,98,.65), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.3);
+    color:var(--rosa-oscuro, var(--vino));
+  }
 }
 body.tarjetas-activas .section-badge::after{
   content:''; position:absolute; inset:-4px; border-radius:50%;
@@ -468,7 +476,7 @@ body.tarjetas-activas #detalles .ubicacion{
 .timeline__text em{ font-style:normal; font-size:calc(.78rem * var(--scale-mensajes)); color:var(--tinta-suave); letter-spacing:.06em; }
 
 /* VESTIMENTA */
-.vestimenta__icons{ display:flex; justify-content:center; gap:40px; margin:34px 0 18px; flex-wrap:wrap; }
+.vestimenta__icons{ display:flex; justify-content:center; gap:40px; margin:34px 0 18px; flex-wrap:wrap; transition:opacity .5s var(--ease), transform .5s var(--ease); }
 .vestimenta__icon{
   width:calc(96px * var(--scale-iconos)); height:calc(96px * var(--scale-iconos)); display:inline-flex; align-items:center; justify-content:center;
   border-radius:50%; background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
@@ -489,7 +497,7 @@ body.tarjetas-activas #detalles .ubicacion{
 .regalos{ position:relative; overflow:hidden; }
 .regalos__lluvia{ position:absolute; inset:0; z-index:0; pointer-events:none; }
 .regalos .section__inner{ position:relative; z-index:1; }
-.regalos__sobre{ margin:26px auto 18px; width:88px; height:88px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2)); position:relative; box-shadow:0 18px 40px -16px rgba(139,79,98,.55), inset 0 2px 8px rgba(255,255,255,.9), inset 0 -4px 10px rgba(184,147,92,.2); }
+.regalos__sobre{ margin:26px auto 18px; width:88px; height:88px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2)); position:relative; box-shadow:0 18px 40px -16px rgba(139,79,98,.55), inset 0 2px 8px rgba(255,255,255,.9), inset 0 -4px 10px rgba(184,147,92,.2); transition:opacity .5s var(--ease), transform .5s var(--ease); }
 .regalos__sobre::after{ content:''; position:absolute; inset:-5px; border-radius:50%; border:1.5px solid var(--oro); opacity:.42; }
 .regalos__sobre svg{ width:48px; height:48px; color:var(--icono); }
 .regalos__mensaje{ font-family:var(--f-display); font-size:calc(clamp(1.1rem, 2.3vw, 1.4rem) * var(--scale-mensajes)); font-style:italic; color:var(--tinta); max-width:540px; margin:0 auto 14px; }
@@ -530,8 +538,12 @@ body.tarjetas-activas #detalles .ubicacion{
 .ubicacion__maps{ grid-area:maps; display:grid; gap:16px; }
 .detalle-card{ grid-area:card; }
 .ubicacion__cta{ grid-area:button; justify-self:start; }
+.ubicacion__icono-wrap{
+  display:flex; justify-content:center; margin-bottom:18px;
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
 .ubicacion__icono{
-  width:64px; height:64px; margin:0 auto 18px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
   background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
   box-shadow:0 14px 30px -14px rgba(139,79,98,.55), inset 0 2px 6px rgba(255,255,255,.9), inset 0 -3px 8px rgba(184,147,92,.18);
   position:relative; color:var(--icono); cursor:pointer;

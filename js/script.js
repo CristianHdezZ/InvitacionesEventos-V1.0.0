@@ -583,6 +583,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // -- Íconos de vestimenta, regalos y ubicación: hacen zoom (aparecen
+  // agrandándose desde chico) cada vez que se pasa por ellos al subir o
+  // bajar el scroll, en vez de revelarse una sola vez como AOS. La
+  // animación flotante del pin de ubicación va en un span aparte para
+  // que el zoom no le pise su propio transform. --
+  const iconosRepetibles = [
+    document.getElementById('vestimentaIcons'),
+    document.querySelector('.regalos__sobre'),
+    document.querySelector('.ubicacion__icono-wrap')
+  ].filter(Boolean);
+  if (iconosRepetibles.length) {
+    const iconoRepetibleObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.style.opacity = entry.isIntersecting ? '1' : '0';
+          entry.target.style.transform = entry.isIntersecting ? 'scale(1)' : 'scale(0.5)';
+        });
+      },
+      { threshold: 0.35 }
+    );
+    iconosRepetibles.forEach((el) => iconoRepetibleObserver.observe(el));
+  }
+
   // -- Swiper: carrusel de la galería --
   // La galería puede haberse repintado desde /api/config, así que
   // inicializamos DESPUÉS de applyConfig para tomar los slides actuales.
