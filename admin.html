@@ -457,8 +457,9 @@
       <input type="text" id="cfgMapaEmbed" placeholder="https://www.google.com/maps/embed?...">
     </div>
     <div class="field">
-      <label for="cfgMapaLink">URL "Cómo llegar" (enlace normal de Google Maps)</label>
-      <input type="text" id="cfgMapaLink" placeholder="https://www.google.com/maps/place/...">
+      <label for="cfgMapaLink">URL "Cómo llegar" (enlace de direcciones de Google Maps)</label>
+      <input type="text" id="cfgMapaLink" placeholder="https://www.google.com/maps/dir/?api=1&destination=...">
+      <p class="hint">Usa este formato para que siempre muestre el botón de direcciones al abrirlo. El botón de arriba lo genera automáticamente.</p>
     </div>
     <button type="button" class="ghost small" id="genMapaBtn">Generar mapa desde la dirección</button>
     <p class="hint">Usa el nombre del lugar + la dirección de arriba para armar el mapa automáticamente — no hace falta ir a Google Maps a copiar el código de inserción. Si prefieres un pin más exacto, puedes pegar tú mismo la URL de inserción en el campo de arriba.</p>
@@ -1211,7 +1212,7 @@ function iconoSvg(id, extraClass) {
 
     const q = encodeURIComponent(consulta);
     document.getElementById('cfgMapaEmbed').value = `https://www.google.com/maps?q=${q}&output=embed`;
-    document.getElementById('cfgMapaLink').value = `https://www.google.com/maps?q=${q}`;
+    document.getElementById('cfgMapaLink').value = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
     updateMapaPreview();
   });
 

@@ -321,6 +321,7 @@ function renderUbicacion(ubicacion) {
   const mapaFrame = document.getElementById('mapaEstaticoFrame');
   const streetViewFrame = document.getElementById('mapaStreetViewFrame');
   const link = document.querySelector('.btn-link');
+  const iconoLink = document.getElementById('ubicacionIconoLink');
 
   if (h3 && ubicacion.nombreLugar) h3.textContent = ubicacion.nombreLugar;
   if (hora && ubicacion.hora) hora.textContent = ubicacion.hora;
@@ -330,6 +331,7 @@ function renderUbicacion(ubicacion) {
   if (mapaFrame && ubicacion.mapaEmbedUrl) mapaFrame.src = ubicacion.mapaEmbedUrl;
   if (streetViewFrame && ubicacion.streetViewUrl) streetViewFrame.src = ubicacion.streetViewUrl;
   if (link && ubicacion.mapaLink) link.href = ubicacion.mapaLink;
+  if (iconoLink && ubicacion.mapaLink) iconoLink.href = ubicacion.mapaLink;
 }
 
 function renderGaleria(urls) {
