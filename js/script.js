@@ -916,10 +916,33 @@ function prepararTarjetaInvitacion(nombreInvitado, config, telefonoInvitado) {
 
     if (whatsappBtn) {
       const nombreQuinceanera = [config?.nombre, config?.apellido].filter(Boolean).join(' ');
-      const mensaje = '¡Hola! Confirmé mi asistencia a los XV años de ' + (nombreQuinceanera || '') + ' 💕 Te comparto mi tarjeta de invitación (la acabo de descargar, ya te la adjunto).';
+      const mensaje = '¡Hola! Confirmé mi asistencia a los XV años de ' + (nombreQuinceanera || '') + ' 💕 Te comparto mi tarjeta de invitación.';
       const linkWhatsapp = construirLinkWhatsapp(telefonoInvitado, mensaje);
       const hint = document.getElementById('rsvpWhatsappHint');
-      if (linkWhatsapp) {
+
+      let archivo = null;
+      try { archivo = new File([blob], nombreArchivo, { type: 'application/pdf' }); } catch (err) { /* File no soportado */ }
+      const puedeCompartirArchivo = archivo && typeof navigator.canShare === 'function' && navigator.canShare({ files: [archivo] });
+
+      if (puedeCompartirArchivo) {
+        // Mejor camino: el propio celular adjunta el PDF de verdad —
+        // la persona elige WhatsApp (y el contacto) en el selector nativo.
+        whatsappBtn.hidden = false;
+        whatsappBtn.onclick = async () => {
+          try {
+            await navigator.share({ files: [archivo], title: 'Mi invitación', text: mensaje });
+          } catch (err) {
+            // Si cancela o falla el share nativo, cae al enlace directo.
+            if (linkWhatsapp) {
+              descargarTarjeta();
+              window.open(linkWhatsapp, '_blank', 'noopener');
+              if (hint) hint.hidden = false;
+            }
+          }
+        };
+      } else if (linkWhatsapp) {
+        // Respaldo: el navegador no puede adjuntar el archivo solo, así
+        // que se descarga aparte y se abre el chat para adjuntarlo ahí.
         whatsappBtn.hidden = false;
         whatsappBtn.onclick = () => {
           descargarTarjeta();
