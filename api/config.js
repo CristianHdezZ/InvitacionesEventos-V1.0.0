@@ -114,7 +114,9 @@ const DEFAULT_CONFIG = {
     colorEvitar: '#E9AABB',
     iconoColorEvitar: 'mdi:flower',
     iconoIzquierdo: 'fi:vestido',
-    iconoDerecho: 'fi:esmoquin'
+    iconoDerecho: 'fi:esmoquin',
+    iconoIzquierdoImagen: '',
+    iconoDerechoImagen: ''
   },
   regalos: {
     activo: true,
@@ -261,7 +263,9 @@ function sanitizeConfig(body) {
     colorEvitar: sanitizeColor(b?.vestimenta?.colorEvitar, d.vestimenta.colorEvitar),
     iconoColorEvitar: ICONOS_VALIDOS.includes(b?.vestimenta?.iconoColorEvitar) ? b?.vestimenta?.iconoColorEvitar : d.vestimenta.iconoColorEvitar,
     iconoIzquierdo: ICONOS_VALIDOS.includes(vestimentaIconoIzq) ? vestimentaIconoIzq : d.vestimenta.iconoIzquierdo,
-    iconoDerecho: ICONOS_VALIDOS.includes(vestimentaIconoDer) ? vestimentaIconoDer : d.vestimenta.iconoDerecho
+    iconoDerecho: ICONOS_VALIDOS.includes(vestimentaIconoDer) ? vestimentaIconoDer : d.vestimenta.iconoDerecho,
+    iconoIzquierdoImagen: sanitizeUrl(b?.vestimenta?.iconoIzquierdoImagen, d.vestimenta.iconoIzquierdoImagen),
+    iconoDerechoImagen: sanitizeUrl(b?.vestimenta?.iconoDerechoImagen, d.vestimenta.iconoDerechoImagen)
   };
 
   const regalos = {

@@ -203,16 +203,39 @@ img{ max-width:100%; display:block; }
 /* =========================================================
    DOT NAV
    ========================================================= */
-.dot-nav{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:14px; }
-.dot-nav a{ position:relative; width:8px; height:8px; border-radius:50%; background:rgba(139,79,98,.25); transition:background .3s, transform .3s; }
-.dot-nav a.active{ background:var(--vino); transform:scale(1.3); }
+.dot-nav{ position:fixed; right:14px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:8px; }
+.dot-nav a{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:50%;
+  background:radial-gradient(circle at 35% 28%, #fff, var(--blush) 68%, var(--blush-2));
+  box-shadow:0 6px 14px -6px rgba(139,79,98,.45), inset 0 1px 3px rgba(255,255,255,.9);
+  border:1px solid rgba(184,147,92,.35);
+  color:var(--vino); opacity:.65;
+  transition:opacity .3s, transform .3s, box-shadow .3s, background .3s;
+}
+.dot-nav a svg{ width:15px; height:15px; }
+.dot-nav a.active{
+  opacity:1; transform:scale(1.14);
+  background:radial-gradient(circle at 35% 28%, #fff, var(--rosa) 68%, var(--vino));
+  box-shadow:0 8px 18px -6px rgba(139,79,98,.6), inset 0 0 0 2px var(--oro);
+}
 .dot-nav a::after{
-  content:attr(data-label); position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  content:attr(data-label); position:absolute; right:40px; top:50%; transform:translateY(-50%);
   font-family:var(--f-body); font-size:.7rem; letter-spacing:.05em; white-space:nowrap;
   color:var(--vino); background:var(--blush); padding:2px 8px; border-radius:2px; opacity:0; pointer-events:none; transition:opacity .2s;
 }
-.dot-nav a:hover::after{ opacity:1; }
-@media (max-width:760px){ .dot-nav{ display:none; } }
+@media (hover:hover){ .dot-nav a:hover::after{ opacity:1; } }
+@media (min-width:761px){
+  .dot-nav{ right:22px; gap:12px; }
+  .dot-nav a{ width:36px; height:36px; }
+  .dot-nav a svg{ width:18px; height:18px; }
+}
+@media (max-width:480px){
+  .dot-nav{ right:8px; gap:6px; }
+  .dot-nav a{ width:26px; height:26px; }
+  .dot-nav a svg{ width:13px; height:13px; }
+  .dot-nav a::after{ display:none; }
+}
 
 /* =========================================================
    MUSIC TOGGLE
@@ -367,6 +390,7 @@ img{ max-width:100%; display:block; }
 }
 .vestimenta__icon:hover{ transform:translateY(-4px) scale(1.04); box-shadow:0 22px 44px -18px rgba(139,79,98,.6), inset 0 0 0 4px rgba(184,147,92,.18); }
 .vestimenta__icon svg{ width:calc(54px * var(--scale-iconos)); height:calc(54px * var(--scale-iconos)); color:var(--icono-vestimenta, var(--icono)); }
+.vestimenta__icon img{ width:calc(76px * var(--scale-iconos)); height:calc(76px * var(--scale-iconos)); object-fit:contain; border-radius:50%; }
 .vestimenta__nota{ font-size:calc(.9rem * var(--scale-mensajes)); color:var(--tinta-suave); font-style:italic; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; }
 
 /* REGALOS */

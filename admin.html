@@ -384,11 +384,19 @@
       <label>Ícono izquierdo</label>
       <input type="hidden" id="vestIconoIzquierdo" value="fi:vestido">
       <div class="icon-picker" id="vestIconoIzquierdoPicker"></div>
+      <label for="vestIconoIzquierdoImagen" style="margin-top:10px;">O usa tu propia imagen (PNG)</label>
+      <input type="text" id="vestIconoIzquierdoImagen" placeholder="assets/gallery/vestido.png o https://...">
+      <p class="hint">Si completas esto, se usará esta imagen en vez del ícono de arriba. Usa PNG con fondo transparente.</p>
+      <img id="vestIconoIzquierdoImagenPreview" alt="" style="width:70px; height:70px; object-fit:contain; display:block; margin-top:8px;">
     </div>
     <div class="field">
       <label>Ícono derecho</label>
       <input type="hidden" id="vestIconoDerecho" value="fi:esmoquin">
       <div class="icon-picker" id="vestIconoDerechoPicker"></div>
+      <label for="vestIconoDerechoImagen" style="margin-top:10px;">O usa tu propia imagen (PNG)</label>
+      <input type="text" id="vestIconoDerechoImagen" placeholder="assets/gallery/traje.png o https://...">
+      <p class="hint">Si completas esto, se usará esta imagen en vez del ícono de arriba. Usa PNG con fondo transparente.</p>
+      <img id="vestIconoDerechoImagenPreview" alt="" style="width:70px; height:70px; object-fit:contain; display:block; margin-top:8px;">
     </div>
   </div>
 
@@ -1171,6 +1179,20 @@ function iconoSvg(id, extraClass) {
     }, 500);
   });
 
+  /* ---------------- Vestimenta: vista previa de imágenes personalizadas ---------------- */
+  [
+    ['vestIconoIzquierdoImagen', 'vestIconoIzquierdoImagenPreview'],
+    ['vestIconoDerechoImagen', 'vestIconoDerechoImagenPreview']
+  ].forEach(([inputId, previewId]) => {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    let debounce;
+    input.addEventListener('input', (e) => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => { preview.src = e.target.value.trim(); }, 500);
+    });
+  });
+
   /* ---------------- Mapa: vista previa + autogenerado desde la dirección ---------------- */
   const mapaPreview = document.getElementById('mapaPreview');
   const cfgMapaEmbed = document.getElementById('cfgMapaEmbed');
@@ -1289,6 +1311,10 @@ function iconoSvg(id, extraClass) {
     vestColorEvitarPicker.setSelected(v.iconoColorEvitar || 'mdi:flower');
     vestIzquierdoPicker.setSelected(v.iconoIzquierdo || 'fi:vestido');
     vestDerechoPicker.setSelected(v.iconoDerecho || 'fi:esmoquin');
+    document.getElementById('vestIconoIzquierdoImagen').value = v.iconoIzquierdoImagen || '';
+    document.getElementById('vestIconoIzquierdoImagenPreview').src = v.iconoIzquierdoImagen || '';
+    document.getElementById('vestIconoDerechoImagen').value = v.iconoDerechoImagen || '';
+    document.getElementById('vestIconoDerechoImagenPreview').src = v.iconoDerechoImagen || '';
 
     const reg = config.regalos || {};
     document.getElementById('regActivo').checked = reg.activo !== false;
@@ -1382,7 +1408,9 @@ function iconoSvg(id, extraClass) {
         colorEvitar: document.getElementById('vestColorEvitar').value,
         iconoColorEvitar: document.getElementById('vestIconoColorEvitar').value,
         iconoIzquierdo: document.getElementById('vestIconoIzquierdo').value,
-        iconoDerecho: document.getElementById('vestIconoDerecho').value
+        iconoDerecho: document.getElementById('vestIconoDerecho').value,
+        iconoIzquierdoImagen: document.getElementById('vestIconoIzquierdoImagen').value.trim(),
+        iconoDerechoImagen: document.getElementById('vestIconoDerechoImagen').value.trim()
       },
       regalos: {
         activo: document.getElementById('regActivo').checked,

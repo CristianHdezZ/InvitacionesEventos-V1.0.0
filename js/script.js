@@ -244,9 +244,11 @@ function renderVestimenta(v) {
   if (container && (v.iconoIzquierdo || v.iconoDerecho)) {
     const left = v.iconoIzquierdo || 'fa6-solid:person-dress';
     const right = v.iconoDerecho || 'mdi:tie';
+    const leftHtml = v.iconoIzquierdoImagen ? `<img src="${escapeHtml(v.iconoIzquierdoImagen)}" alt="" />` : iconoSvg(left);
+    const rightHtml = v.iconoDerechoImagen ? `<img src="${escapeHtml(v.iconoDerechoImagen)}" alt="" />` : iconoSvg(right);
     container.innerHTML = `
-      <span class="vestimenta__icon">${iconoSvg(left)}</span>
-      <span class="vestimenta__icon">${iconoSvg(right)}</span>
+      <span class="vestimenta__icon">${leftHtml}</span>
+      <span class="vestimenta__icon">${rightHtml}</span>
     `;
   }
   // El indicador del color a evitar es un ícono configurable, pintado
