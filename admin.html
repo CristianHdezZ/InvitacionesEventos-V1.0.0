@@ -294,6 +294,78 @@
       </div>
       <p class="hint">Se aplica tanto al dibujo (SVG) como a la imagen personalizada, en la portada y en el inicio.</p>
     </div>
+    <div class="field">
+      <label>Decoración floral (guirnaldas)</label>
+      <label class="switch-label" style="font-weight:normal;">
+        <input type="radio" name="floralTipo" id="floralTipoSvg" value="svg" checked>
+        Dibujo (SVG) — se puede recolorear desde este panel
+      </label>
+      <label class="switch-label" style="font-weight:normal;">
+        <input type="radio" name="floralTipo" id="floralTipoImagen" value="imagen">
+        Imagen personalizada (.png)
+      </label>
+      <p class="hint">Son las guirnaldas de flores que aparecen arriba y abajo de la portada, y arriba y abajo de la carta. La imagen se aplica en las cuatro posiciones (las de abajo se voltean solas para que la guirnalda cierre hacia arriba).</p>
+    </div>
+    <div class="field" id="floralImagenField" style="display:none;">
+      <label for="cfgFloralUrl">URL de la imagen</label>
+      <input type="text" id="cfgFloralUrl" placeholder="assets/gallery/flores.png o https://...">
+      <p class="hint">Usa un PNG horizontal con fondo transparente. Ruta propia o enlace público, igual que la foto principal.</p>
+      <img id="floralPreview" alt="" style="width:160px; height:auto; display:block; margin-top:8px;">
+    </div>
+    <div class="field">
+      <label for="floralEscala">Tamaño de la decoración floral</label>
+      <div class="rango-field">
+        <input type="range" id="floralEscala" min="30" max="250" step="5" value="100">
+        <output id="floralEscalaVal">100%</output>
+      </div>
+      <p class="hint">Se aplica tanto al dibujo (SVG) como a la imagen, en las cuatro posiciones.</p>
+    </div>
+    <div class="field">
+      <label for="floralOpacidad">Intensidad de la imagen floral</label>
+      <div class="rango-field">
+        <input type="range" id="floralOpacidad" min="10" max="100" step="5" value="100">
+        <output id="floralOpacidadVal">100%</output>
+      </div>
+      <p class="hint">Baja el valor para que la imagen se vea más suave y transparente, y no compita con el texto. Solo aplica a la imagen personalizada.</p>
+    </div>
+    <div class="field">
+      <label for="floralDesenfoque">Difuminado de la imagen floral</label>
+      <div class="rango-field">
+        <input type="range" id="floralDesenfoque" min="0" max="10" step="1" value="0">
+        <output id="floralDesenfoqueVal">0 px</output>
+      </div>
+      <p class="hint">Desenfoca suavemente los bordes para que la decoración se funda con el fondo. En 0 queda nítida.</p>
+    </div>
+    <div class="field">
+      <label for="floralSaturacion">Intensidad del color de la imagen floral</label>
+      <div class="rango-field">
+        <input type="range" id="floralSaturacion" min="0" max="150" step="5" value="100">
+        <output id="floralSaturacionVal">100%</output>
+      </div>
+      <p class="hint">Baja el valor para apagar los colores fuertes de la imagen (en 0 queda en escala de grises).</p>
+    </div>
+    <div class="field">
+      <label for="floralTinte">Teñir con el tono de la invitación</label>
+      <div class="rango-field">
+        <input type="range" id="floralTinte" min="0" max="100" step="5" value="0">
+        <output id="floralTinteVal">0%</output>
+      </div>
+      <p class="hint">Lleva los colores de la imagen hacia el rosa de tu paleta, para que la decoración combine con el resto de la invitación. En 0 conserva sus colores originales; en 100 queda totalmente en el tono del sitio.</p>
+    </div>
+    <div class="field">
+      <label class="switch-label">
+        <input type="checkbox" id="floralAlFrenteArriba">
+        Arreglo floral de arriba: mostrarlo por delante
+      </label>
+      <p class="hint">Sin marcar queda detrás de la tarjeta; marcado se monta por encima de ella.</p>
+    </div>
+    <div class="field">
+      <label class="switch-label">
+        <input type="checkbox" id="floralAlFrenteAbajo">
+        Arreglo floral de abajo: mostrarlo por delante
+      </label>
+      <p class="hint">Sin marcar queda detrás de la ilustración de la quinceañera; marcado se monta por delante de ella.</p>
+    </div>
   </div>
 
   <div class="card-box">
@@ -973,6 +1045,41 @@ function iconoSvg(id, extraClass) {
     rangoCoronaEscala.addEventListener('input', pintarEscalaCorona);
     pintarEscalaCorona();
   }
+  const rangoFloralEscala = document.getElementById('floralEscala');
+  const rangoFloralEscalaVal = document.getElementById('floralEscalaVal');
+  if (rangoFloralEscala && rangoFloralEscalaVal) {
+    const pintarEscalaFloral = () => { rangoFloralEscalaVal.textContent = rangoFloralEscala.value + '%'; };
+    rangoFloralEscala.addEventListener('input', pintarEscalaFloral);
+    pintarEscalaFloral();
+  }
+  const rangoFloralOpacidad = document.getElementById('floralOpacidad');
+  const rangoFloralOpacidadVal = document.getElementById('floralOpacidadVal');
+  if (rangoFloralOpacidad && rangoFloralOpacidadVal) {
+    const pintarOpacidadFloral = () => { rangoFloralOpacidadVal.textContent = rangoFloralOpacidad.value + '%'; };
+    rangoFloralOpacidad.addEventListener('input', pintarOpacidadFloral);
+    pintarOpacidadFloral();
+  }
+  const rangoFloralDesenfoque = document.getElementById('floralDesenfoque');
+  const rangoFloralDesenfoqueVal = document.getElementById('floralDesenfoqueVal');
+  if (rangoFloralDesenfoque && rangoFloralDesenfoqueVal) {
+    const pintarDesenfoqueFloral = () => { rangoFloralDesenfoqueVal.textContent = rangoFloralDesenfoque.value + ' px'; };
+    rangoFloralDesenfoque.addEventListener('input', pintarDesenfoqueFloral);
+    pintarDesenfoqueFloral();
+  }
+  const rangoFloralSaturacion = document.getElementById('floralSaturacion');
+  const rangoFloralSaturacionVal = document.getElementById('floralSaturacionVal');
+  if (rangoFloralSaturacion && rangoFloralSaturacionVal) {
+    const pintarSaturacionFloral = () => { rangoFloralSaturacionVal.textContent = rangoFloralSaturacion.value + '%'; };
+    rangoFloralSaturacion.addEventListener('input', pintarSaturacionFloral);
+    pintarSaturacionFloral();
+  }
+  const rangoFloralTinte = document.getElementById('floralTinte');
+  const rangoFloralTinteVal = document.getElementById('floralTinteVal');
+  if (rangoFloralTinte && rangoFloralTinteVal) {
+    const pintarTinteFloral = () => { rangoFloralTinteVal.textContent = rangoFloralTinte.value + '%'; };
+    rangoFloralTinte.addEventListener('input', pintarTinteFloral);
+    pintarTinteFloral();
+  }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1263,6 +1370,27 @@ function iconoSvg(id, extraClass) {
     }, 500);
   });
 
+  /* ---------------- Decoración floral (guirnaldas): SVG o imagen ---------------- */
+  const floralImagenField = document.getElementById('floralImagenField');
+  const floralPreview = document.getElementById('floralPreview');
+  const cfgFloralUrl = document.getElementById('cfgFloralUrl');
+
+  function actualizarFloralCampos(){
+    const esImagen = document.getElementById('floralTipoImagen').checked;
+    floralImagenField.style.display = esImagen ? '' : 'none';
+  }
+  document.querySelectorAll('input[name="floralTipo"]').forEach((input) => {
+    input.addEventListener('change', actualizarFloralCampos);
+  });
+
+  let floralDebounce;
+  cfgFloralUrl.addEventListener('input', (e) => {
+    clearTimeout(floralDebounce);
+    floralDebounce = setTimeout(() => {
+      floralPreview.src = e.target.value.trim();
+    }, 500);
+  });
+
   /* ---------------- Vestimenta: vista previa de imágenes personalizadas ---------------- */
   [
     ['vestIconoIzquierdoImagen', 'vestIconoIzquierdoImagenPreview'],
@@ -1360,6 +1488,31 @@ function iconoSvg(id, extraClass) {
     const escalaCorona = (typeof corona.escala === 'number') ? corona.escala : 100;
     rangoCoronaEscala.value = escalaCorona;
     rangoCoronaEscalaVal.textContent = escalaCorona + '%';
+
+    const floral = config.decoracionFloral || {};
+    const floralTipo = ['svg', 'imagen'].includes(floral.tipo) ? floral.tipo : 'svg';
+    const floralInput = document.querySelector(`input[name="floralTipo"][value="${floralTipo}"]`);
+    if (floralInput) floralInput.checked = true;
+    cfgFloralUrl.value = floral.imagenUrl || '';
+    floralPreview.src = floral.imagenUrl || '';
+    actualizarFloralCampos();
+    const escalaFloral = (typeof floral.escala === 'number') ? floral.escala : 100;
+    rangoFloralEscala.value = escalaFloral;
+    rangoFloralEscalaVal.textContent = escalaFloral + '%';
+    const opacidadFloral = (typeof floral.opacidad === 'number') ? floral.opacidad : 100;
+    rangoFloralOpacidad.value = opacidadFloral;
+    rangoFloralOpacidadVal.textContent = opacidadFloral + '%';
+    const desenfoqueFloral = (typeof floral.desenfoque === 'number') ? floral.desenfoque : 0;
+    rangoFloralDesenfoque.value = desenfoqueFloral;
+    rangoFloralDesenfoqueVal.textContent = desenfoqueFloral + ' px';
+    const saturacionFloral = (typeof floral.saturacion === 'number') ? floral.saturacion : 100;
+    rangoFloralSaturacion.value = saturacionFloral;
+    rangoFloralSaturacionVal.textContent = saturacionFloral + '%';
+    const tinteFloral = (typeof floral.tinte === 'number') ? floral.tinte : 0;
+    rangoFloralTinte.value = tinteFloral;
+    rangoFloralTinteVal.textContent = tinteFloral + '%';
+    document.getElementById('floralAlFrenteArriba').checked = floral.alFrenteArriba === true;
+    document.getElementById('floralAlFrenteAbajo').checked = floral.alFrenteAbajo === true;
 
     const c = config.colores || {};
     document.getElementById('colBlush').value = c.blush || '#FBEAEE';
@@ -1469,6 +1622,17 @@ function iconoSvg(id, extraClass) {
         tipo: document.querySelector('input[name="coronaTipo"]:checked')?.value || 'svg',
         imagenUrl: cfgCoronaUrl.value.trim(),
         escala: parseInt(rangoCoronaEscala.value, 10)
+      },
+      decoracionFloral: {
+        tipo: document.querySelector('input[name="floralTipo"]:checked')?.value || 'svg',
+        imagenUrl: cfgFloralUrl.value.trim(),
+        escala: parseInt(rangoFloralEscala.value, 10),
+        opacidad: parseInt(rangoFloralOpacidad.value, 10),
+        desenfoque: parseInt(rangoFloralDesenfoque.value, 10),
+        saturacion: parseInt(rangoFloralSaturacion.value, 10),
+        tinte: parseInt(rangoFloralTinte.value, 10),
+        alFrenteArriba: document.getElementById('floralAlFrenteArriba').checked,
+        alFrenteAbajo: document.getElementById('floralAlFrenteAbajo').checked
       },
       fraseInvitacion: document.getElementById('cfgFraseInvitacion').value.trim(),
       fraseFecha: document.getElementById('cfgFraseFecha').value.trim(),

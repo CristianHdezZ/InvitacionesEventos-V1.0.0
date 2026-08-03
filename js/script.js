@@ -492,6 +492,81 @@ function renderCorona(cfg) {
   });
 }
 
+// Tono (matiz) de un color hex, en grados 0-360. Se usa para teñir la
+// decoración floral con el color de la propia invitación.
+function hexAHue(hex) {
+  if (typeof hex !== 'string') return null;
+  const limpio = hex.trim().replace('#', '');
+  if (limpio.length !== 6) return null;
+  const r = parseInt(limpio.slice(0, 2), 16) / 255;
+  const g = parseInt(limpio.slice(2, 4), 16) / 255;
+  const b = parseInt(limpio.slice(4, 6), 16) / 255;
+  if ([r, g, b].some((v) => !Number.isFinite(v))) return null;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+  if (delta === 0) return 0;
+  let h;
+  if (max === r) h = ((g - b) / delta) % 6;
+  else if (max === g) h = (b - r) / delta + 2;
+  else h = (r - g) / delta + 4;
+  h *= 60;
+  return h < 0 ? h + 360 : h;
+}
+
+// Decoración floral (guirnaldas): se puede dejar el dibujo SVG de
+// siempre o reemplazarlo por un .png en las cuatro posiciones donde
+// aparece — arriba y abajo de la portada, y arriba y abajo de la carta.
+function renderDecoracionFloral(cfg, colores) {
+  const escala = Number(cfg?.escala);
+  document.documentElement.style.setProperty('--floral-escala', Number.isFinite(escala) && escala > 0 ? escala / 100 : 1);
+
+  const opacidad = Number(cfg?.opacidad);
+  document.documentElement.style.setProperty('--floral-opacidad', Number.isFinite(opacidad) && opacidad > 0 ? opacidad / 100 : 1);
+
+  const desenfoque = Number(cfg?.desenfoque);
+  document.documentElement.style.setProperty('--floral-desenfoque', (Number.isFinite(desenfoque) && desenfoque > 0 ? desenfoque : 0) + 'px');
+
+  const saturacion = Number(cfg?.saturacion);
+  document.documentElement.style.setProperty('--floral-saturacion', Number.isFinite(saturacion) && saturacion >= 0 ? saturacion / 100 : 1);
+
+  // Tinte: lleva la imagen hacia el tono de la propia invitación. El
+  // filtro sepia() deja la imagen en un tono cálido fijo (~35°), así
+  // que se gira ese matiz hasta el color rosa de la paleta.
+  const tinte = Number(cfg?.tinte);
+  const tinteFrac = Number.isFinite(tinte) && tinte > 0 ? Math.min(1, tinte / 100) : 0;
+  document.documentElement.style.setProperty('--floral-tinte', tinteFrac);
+  const hueObjetivo = hexAHue(colores?.rosaDeep || colores?.rosa);
+  const HUE_SEPIA = 35;
+  const giro = hueObjetivo === null ? 0 : (hueObjetivo - HUE_SEPIA) * tinteFrac;
+  document.documentElement.style.setProperty('--floral-tinte-hue', giro.toFixed(1) + 'deg');
+
+  // Capa: detrás (por defecto) o delante de la tarjeta / la ilustración.
+  // 5 queda por encima del ícono de la sección (2) y del vestido (1).
+  document.documentElement.style.setProperty('--floral-z-arriba', cfg?.alFrenteArriba === true ? '5' : '0');
+  document.documentElement.style.setProperty('--floral-z-abajo', cfg?.alFrenteAbajo === true ? '5' : '0');
+
+  const pares = [
+    { svg: document.getElementById('gateFloralTopSvg'), img: document.getElementById('gateFloralTopImg') },
+    { svg: document.getElementById('gateFloralBottomSvg'), img: document.getElementById('gateFloralBottomImg') },
+    { svg: document.getElementById('cartaFloralTopSvg'), img: document.getElementById('cartaFloralTopImg') },
+    { svg: document.getElementById('cartaFloralBottomSvg'), img: document.getElementById('cartaFloralBottomImg') }
+  ];
+  const src = cfg?.tipo === 'imagen' && cfg?.imagenUrl ? cfg.imagenUrl : null;
+
+  pares.forEach(({ svg, img }) => {
+    if (!svg || !img) return;
+    if (src) {
+      img.src = src;
+      img.hidden = false;
+      svg.style.display = 'none';
+    } else {
+      img.hidden = true;
+      svg.style.display = '';
+    }
+  });
+}
+
 function renderMusica(url) {
   const audio = document.getElementById('bgMusic');
   if (!audio || !url) return;
@@ -573,10 +648,10 @@ function iniciarLluviaSobres() {
 async function applyConfig() {
   try {
     const res = await fetch('/api/config');
-    if (!res.ok) { renderIlustracionQuinceanera(null); renderCorona(null); return null; }
+    if (!res.ok) { renderIlustracionQuinceanera(null); renderCorona(null); renderDecoracionFloral(null); return null; }
     const data = await res.json();
     const config = data.config;
-    if (!config) { renderIlustracionQuinceanera(null); renderCorona(null); return null; }
+    if (!config) { renderIlustracionQuinceanera(null); renderCorona(null); renderDecoracionFloral(null); return null; }
 
     renderTextos(config);
     renderFotoPrincipal(config.fotoPrincipal, config.nombre, config.apellido);
@@ -584,6 +659,7 @@ async function applyConfig() {
     renderMusica(config.musica);
     renderIlustracionQuinceanera(config.ilustracionQuinceanera);
     renderCorona(config.corona);
+    renderDecoracionFloral(config.decoracionFloral, config.colores);
     renderFecha(config.fechaEvento);
     applyColors(config.colores);
     applyTipografia(config.tipografia, config.estilos);
@@ -599,6 +675,7 @@ async function applyConfig() {
     console.warn('No se pudo cargar la configuración dinámica; se usa el contenido por defecto del HTML.', err);
     renderIlustracionQuinceanera(null);
     renderCorona(null);
+    renderDecoracionFloral(null);
     return null;
   }
 }

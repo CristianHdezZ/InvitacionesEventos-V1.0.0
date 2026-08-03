@@ -47,7 +47,7 @@ function migrarIcono(valor) {
 // cargar URLs de Google Fonts arbitrarias ni romper el diseño con una
 // fuente que no combine.
 const ILUSTRACION_TIPOS_VALIDOS = ['svg', 'svg-detallado', 'imagen'];
-const CORONA_TIPOS_VALIDOS = ['svg', 'imagen'];
+const SVG_O_IMAGEN_VALIDOS = ['svg', 'imagen'];
 const FUENTES_DISPLAY = ['Cormorant Garamond', 'Playfair Display', 'EB Garamond', 'Marcellus'];
 const FUENTES_SCRIPT = ['Alex Brush', 'Great Vibes', 'Parisienne', 'Dancing Script', 'Playball'];
 const FUENTES_BODY = ['Jost', 'Poppins', 'Montserrat', 'Lato'];
@@ -80,6 +80,17 @@ const DEFAULT_CONFIG = {
     tipo: 'svg',
     imagenUrl: '',
     escala: 100
+  },
+  decoracionFloral: {
+    tipo: 'svg',
+    imagenUrl: '',
+    escala: 100,
+    opacidad: 100,
+    desenfoque: 0,
+    saturacion: 100,
+    tinte: 0,
+    alFrenteArriba: false,
+    alFrenteAbajo: false
   },
   colores: {
     blush: '#FBEAEE',
@@ -340,9 +351,20 @@ function sanitizeConfig(body) {
       escala: sanitizeEntero(b?.ilustracionQuinceanera?.escala, 30, 250, d.ilustracionQuinceanera.escala)
     },
     corona: {
-      tipo: sanitizeChoice(b?.corona?.tipo, CORONA_TIPOS_VALIDOS, d.corona.tipo),
+      tipo: sanitizeChoice(b?.corona?.tipo, SVG_O_IMAGEN_VALIDOS, d.corona.tipo),
       imagenUrl: sanitizeUrl(b?.corona?.imagenUrl, d.corona.imagenUrl),
       escala: sanitizeEntero(b?.corona?.escala, 30, 250, d.corona.escala)
+    },
+    decoracionFloral: {
+      tipo: sanitizeChoice(b?.decoracionFloral?.tipo, SVG_O_IMAGEN_VALIDOS, d.decoracionFloral.tipo),
+      imagenUrl: sanitizeUrl(b?.decoracionFloral?.imagenUrl, d.decoracionFloral.imagenUrl),
+      escala: sanitizeEntero(b?.decoracionFloral?.escala, 30, 250, d.decoracionFloral.escala),
+      opacidad: sanitizeEntero(b?.decoracionFloral?.opacidad, 10, 100, d.decoracionFloral.opacidad),
+      desenfoque: sanitizeEntero(b?.decoracionFloral?.desenfoque, 0, 10, d.decoracionFloral.desenfoque),
+      saturacion: sanitizeEntero(b?.decoracionFloral?.saturacion, 0, 150, d.decoracionFloral.saturacion),
+      tinte: sanitizeEntero(b?.decoracionFloral?.tinte, 0, 100, d.decoracionFloral.tinte),
+      alFrenteArriba: typeof b?.decoracionFloral?.alFrenteArriba === 'boolean' ? b.decoracionFloral.alFrenteArriba : d.decoracionFloral.alFrenteArriba,
+      alFrenteAbajo: typeof b?.decoracionFloral?.alFrenteAbajo === 'boolean' ? b.decoracionFloral.alFrenteAbajo : d.decoracionFloral.alFrenteAbajo
     },
     colores,
     tipografia,
