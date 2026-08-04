@@ -77,27 +77,32 @@ img{ max-width:100%; display:block; }
 .gate__lottie{ width:80px; height:80px; position:absolute; top:16%; right:8%; opacity:.85; pointer-events:none; }
 @media (max-width:640px){ .gate__lottie{ width:56px; height:56px; right:4%; } }
 
-.garland{ width:calc(min(500px, 90vw) * var(--floral-escala, 1)); height:auto; flex:0 0 auto; position:relative; }
-.garland--top{ z-index:var(--floral-z-arriba, 0); }
-.garland--bottom{ z-index:var(--floral-z-abajo, 0); }
+.garland{ width:min(500px, 90vw); height:auto; flex:0 0 auto; }
 /* Decoración floral como imagen (.png) — reemplaza al dibujo SVG en
    las cuatro posiciones. Se le impone la MISMA caja (proporción) que
    tiene el dibujo SVG y object-fit:contain, para que cualquier imagen
    que se suba respete las medidas del diseño en vez de deformar el
-   espacio. La opacidad, el desenfoque y la saturación son
-   configurables, para poder suavizar la imagen y que su tono combine
-   con la paleta del sitio en vez de competir con el texto. */
+   espacio.
+
+   TODOS los controles del admin (tamaño, opacidad, difuminado, color,
+   tinte y capa) se aplican únicamente aquí, sobre la imagen. El dibujo
+   SVG conserva siempre el diseño original, sin que ningún ajuste del
+   panel lo modifique. */
 .garland-img{
-  object-fit:contain; display:block;
+  object-fit:contain; display:block; position:relative;
   opacity:var(--floral-opacidad, 1);
-  filter:blur(var(--floral-desenfoque, 0px))
-         sepia(var(--floral-tinte, 0))
-         hue-rotate(var(--floral-tinte-hue, 0deg))
-         saturate(var(--floral-saturacion, 1));
+  /* El filtro se arma desde JS y queda en 'none' cuando no hay ningún
+     efecto configurado. Un filtro neutro (blur(0) saturate(1)...) no se
+     ve, pero fuerza composición por GPU y en Safari/iOS puede hacer que
+     la imagen se pinte como un recuadro vacío, sobre todo junto al
+     transform de volteo. */
+  filter:var(--floral-filtro, none);
 }
-.garland.garland-img{ aspect-ratio:500 / 140; }
-.carta__garland.garland-img{ aspect-ratio:500 / 100; }
-.garland--bottom.garland-img{ transform:scaleY(-1); }
+.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); }
+.carta__garland.garland-img{ aspect-ratio:500 / 100; max-width:calc(640px * var(--floral-escala, 1)); }
+.garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
+.garland--bottom.garland-img{ transform:scaleY(-1); z-index:var(--floral-z-abajo, 0); }
+.carta__garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
 /* La guirnalda inferior de la carta trae su propio opacity y transform
    (más abajo en este archivo). Al usar imagen hay que repetirlos aquí
    con dos clases, para que el control de intensidad del admin sí la
@@ -105,6 +110,7 @@ img{ max-width:100%; display:block; }
 .carta__garland--bottom.garland-img{
   transform:translateX(-50%) scaleY(-1);
   opacity:var(--floral-opacidad, 1);
+  z-index:var(--floral-z-abajo, 0);
 }
 .rose__c1{ fill:var(--rosa); opacity:.62; }
 .rose__c2{ fill:var(--rosa-deep); opacity:.5; }
@@ -183,7 +189,10 @@ img{ max-width:100%; display:block; }
 }
 @media (max-height:700px){
   .gate{ padding:1.5vh 6vw; }
-  .garland{ width:calc(min(320px, 70vw) * var(--floral-escala, 1)); }
+  .garland{ width:min(320px, 70vw); }
+  /* Con dos clases para que gane sobre .garland.garland-img de arriba,
+     que no está dentro de este media query. */
+  .garland.garland-img{ width:calc(min(320px, 70vw) * var(--floral-escala, 1)); }
   .gate__content{ margin:0.4vh auto; }
   .gate__eyebrow{ margin-bottom:4px; }
   .gate__xv{ margin:3px 0 6px; }
@@ -490,9 +499,9 @@ body.tarjetas-activas #detalles .ubicacion{
 .carta__texto{ font-family:var(--f-display); font-size:calc(clamp(1.15rem, 2.4vw, 1.5rem) * var(--scale-mensajes)); font-style:italic; color:var(--tinta); max-width:560px; margin:26px auto 22px; }
 .carta__firma{ font-family:var(--f-script); font-size:2rem; color:var(--rosa-deep); margin-bottom:10px; }
 
-.carta__garland{ width:100%; max-width:calc(640px * var(--floral-escala, 1)); height:auto; display:block; margin:0 auto; }
-.carta__garland--top{ margin-bottom:-10px; position:relative; z-index:var(--floral-z-arriba, 0); }
-.carta__garland--bottom{ position:absolute; bottom:2vh; left:50%; transform:translateX(-50%); z-index:var(--floral-z-abajo, 0); opacity:.9; }
+.carta__garland{ width:100%; max-width:640px; height:auto; display:block; margin:0 auto; }
+.carta__garland--top{ margin-bottom:-10px; }
+.carta__garland--bottom{ position:absolute; bottom:2vh; left:50%; transform:translateX(-50%); z-index:0; opacity:.9; }
 .carta__dress{
   width:calc(min(180px, 34vw) * var(--ilustracion-escala, 1)); height:auto;
   position:absolute; bottom:-10px; left:50%;

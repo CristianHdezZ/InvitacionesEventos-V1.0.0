@@ -525,21 +525,28 @@ function renderDecoracionFloral(cfg, colores) {
   document.documentElement.style.setProperty('--floral-opacidad', Number.isFinite(opacidad) && opacidad > 0 ? opacidad / 100 : 1);
 
   const desenfoque = Number(cfg?.desenfoque);
-  document.documentElement.style.setProperty('--floral-desenfoque', (Number.isFinite(desenfoque) && desenfoque > 0 ? desenfoque : 0) + 'px');
+  const desenfoquePx = Number.isFinite(desenfoque) && desenfoque > 0 ? desenfoque : 0;
 
   const saturacion = Number(cfg?.saturacion);
-  document.documentElement.style.setProperty('--floral-saturacion', Number.isFinite(saturacion) && saturacion >= 0 ? saturacion / 100 : 1);
+  const saturacionFrac = Number.isFinite(saturacion) && saturacion >= 0 ? saturacion / 100 : 1;
 
   // Tinte: lleva la imagen hacia el tono de la propia invitación. El
   // filtro sepia() deja la imagen en un tono cálido fijo (~35°), así
   // que se gira ese matiz hasta el color rosa de la paleta.
   const tinte = Number(cfg?.tinte);
   const tinteFrac = Number.isFinite(tinte) && tinte > 0 ? Math.min(1, tinte / 100) : 0;
-  document.documentElement.style.setProperty('--floral-tinte', tinteFrac);
   const hueObjetivo = hexAHue(colores?.rosaDeep || colores?.rosa);
   const HUE_SEPIA = 35;
   const giro = hueObjetivo === null ? 0 : (hueObjetivo - HUE_SEPIA) * tinteFrac;
-  document.documentElement.style.setProperty('--floral-tinte-hue', giro.toFixed(1) + 'deg');
+
+  // Se arma el filtro solo con los efectos realmente activos. Si no hay
+  // ninguno queda en 'none': un filtro neutro no se ve pero fuerza
+  // composición por GPU y en Safari/iOS puede dejar la imagen en blanco.
+  const filtros = [];
+  if (desenfoquePx > 0) filtros.push(`blur(${desenfoquePx}px)`);
+  if (tinteFrac > 0) filtros.push(`sepia(${tinteFrac}) hue-rotate(${giro.toFixed(1)}deg)`);
+  if (saturacionFrac !== 1) filtros.push(`saturate(${saturacionFrac})`);
+  document.documentElement.style.setProperty('--floral-filtro', filtros.length ? filtros.join(' ') : 'none');
 
   // Capa: detrás (por defecto) o delante de la tarjeta / la ilustración.
   // 5 queda por encima del ícono de la sección (2) y del vestido (1).
