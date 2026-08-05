@@ -52,6 +52,11 @@ body.gate-active{ overflow:hidden; height:100vh; }
 
 h1,h2,h3{ font-family:var(--f-display); font-weight:500; margin:0; color:var(--vino); }
 img{ max-width:100%; display:block; }
+/* El display:block de arriba le gana al display:none que el navegador
+   aplica por el atributo [hidden], así que las imágenes ocultas (las
+   alternativas .png de la corona, la ilustración y las guirnaldas)
+   seguirían ocupando espacio y mostrando el ícono de imagen rota. */
+img[hidden]{ display:none; }
 
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior:auto; }
@@ -98,7 +103,11 @@ img{ max-width:100%; display:block; }
      transform de volteo. */
   filter:var(--floral-filtro, none);
 }
-.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); }
+/* El max-height evita que un porcentaje de tamaño alto (ej. 190%) haga
+   que las guirnaldas se coman todo el alto de la portada y aplasten a
+   la quinceañera. Con object-fit:contain la imagen se reescala sola,
+   sin deformarse. */
+.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); max-height:17vh; }
 .carta__garland.garland-img{ aspect-ratio:500 / 100; max-width:calc(640px * var(--floral-escala, 1)); }
 .garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
 .garland--bottom.garland-img{ transform:scaleY(-1); z-index:var(--floral-z-abajo, 0); }
@@ -175,10 +184,20 @@ img{ max-width:100%; display:block; }
   100%{ transform:scale(1.6); opacity:0; }
 }
 
+/* La quinceañera va dentro del flujo (no posicionada de forma
+   absoluta): así el navegador le reserva su espacio y nunca se puede
+   montar encima del sobre, sin importar el alto o ancho de la pantalla.
+   El margen inferior negativo la deja apoyada sobre la guirnalda de
+   abajo, y el max-height/max-width la escalan sin deformarla. */
 .gate__dress{
   width:auto; height:auto;
   max-width:calc(min(180px, 36vw) * var(--ilustracion-escala, 1)); max-height:22vh;
-  position:absolute; left:0; right:0; margin:0 auto; bottom:-4px; z-index:1;
+  /* Puede encogerse si falta espacio (min-height:0 lo permite dentro del
+     flex). Con object-fit/preserveAspectRatio la figura se reescala sin
+     deformarse, así se adapta sola a cualquier resolución. */
+  flex:0 1 auto; min-height:64px;
+  margin:0 auto -4.5vh;
+  position:relative; z-index:2;
   animation:dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
 }
 @keyframes dress-float{
@@ -187,7 +206,9 @@ img{ max-width:100%; display:block; }
   50%{ transform:translateY(-9px) rotate(0deg); }
   75%{ transform:translateY(-5px) rotate(1.3deg); }
 }
-@media (max-height:700px){
+/* Pantallas de alto reducido o medio (iPhone SE, Galaxy S8+, etc.): la
+   portada se compacta para que la guirnalda de abajo siempre quepa. */
+@media (max-height:820px){
   .gate{ padding:1.5vh 6vw; }
   .garland{ width:min(320px, 70vw); }
   /* Con dos clases para que gane sobre .garland.garland-img de arriba,
@@ -198,7 +219,18 @@ img{ max-width:100%; display:block; }
   .gate__xv{ margin:3px 0 6px; }
   .gate__quote{ margin-bottom:8px; }
   .gate__envelope{ width:min(170px, 50vw); }
-  .gate__dress{ max-width:calc(min(130px, 28vw) * var(--ilustracion-escala, 1)); max-height:16vh; bottom:-2px; }
+  .gate__dress{ max-width:calc(min(120px, 26vw) * var(--ilustracion-escala, 1)); max-height:11vh; margin-bottom:-2.5vh; }
+}
+/* --- Celulares altos (tipo iPhone Pro Max) ---------------------------
+   Con justify-content:space-between el espacio libre sobrante se repartía
+   en dos huecos enormes (unos 124px) entre la guirnalda de arriba y el
+   texto. Aquí el contenido se acomoda arriba con una separación medida y
+   el espacio sobrante se manda todo encima de la quinceañera, de modo
+   que ella y la guirnalda de abajo quedan juntas al pie. */
+@media (max-width:640px) and (min-height:821px){
+  .gate{ justify-content:flex-start; }
+  .garland--top{ margin-bottom:2vh; }
+  .gate__dress{ margin-top:auto; max-height:26vh; }
 }
 .dress__body{ fill:var(--vestido); opacity:.92; }
 .dress__hair{ fill:var(--vino); opacity:.9; }
@@ -502,8 +534,14 @@ body.tarjetas-activas #detalles .ubicacion{
 .carta__garland{ width:100%; max-width:640px; height:auto; display:block; margin:0 auto; }
 .carta__garland--top{ margin-bottom:-10px; }
 .carta__garland--bottom{ position:absolute; bottom:2vh; left:50%; transform:translateX(-50%); z-index:0; opacity:.9; }
+/* El max-height la ata al espacio que la sección reserva abajo
+   (padding-bottom), para que nunca se monte sobre la tarjeta del
+   mensaje. Con max-width/max-height y width/height en auto, la figura
+   se reescala guardando su proporción, igual que en la portada. */
 .carta__dress{
-  width:calc(min(180px, 34vw) * var(--ilustracion-escala, 1)); height:auto;
+  width:auto; height:auto;
+  max-width:calc(min(180px, 34vw) * var(--ilustracion-escala, 1));
+  max-height:calc(max(280px, 24vh) * var(--ilustracion-escala, 1) - 26px);
   position:absolute; bottom:-10px; left:50%;
   z-index:1; opacity:.95;
   animation:carta-dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
@@ -517,7 +555,10 @@ body.tarjetas-activas #detalles .ubicacion{
 .gate__dress-img, .carta__dress-img{ object-fit:contain; display:block; }
 @media (max-width:600px){
   .carta{ padding-bottom:calc(max(240px, 26vh) * var(--ilustracion-escala, 1)); }
-  .carta__dress{ width:calc(min(150px, 40vw) * var(--ilustracion-escala, 1)); }
+  .carta__dress{
+    max-width:calc(min(150px, 40vw) * var(--ilustracion-escala, 1));
+    max-height:calc(max(240px, 26vh) * var(--ilustracion-escala, 1) - 26px);
+  }
 }
 
 /* COUNTDOWN */
