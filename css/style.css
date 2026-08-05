@@ -537,7 +537,18 @@ body.tarjetas-activas #detalles .ubicacion{
 .section__title{ font-size:calc(clamp(1.7rem, 4vw, 2.6rem) * var(--scale-titulos)); margin-bottom:8px; }
 
 /* CARTA */
-.carta{ position:relative; overflow:hidden; padding-bottom:calc(max(280px, 24vh) * var(--ilustracion-escala, 1)); }
+/* --carta-reserva: el espacio que la sección aparta abajo para la
+   quinceañera y la guirnalda.
+   --carta-piso: a qué altura queda su base. Se calcula desde la
+   guirnalda (que está a 2vh del borde) subiendo un 60% de su alto
+   —la guirnalda es 5:1, así que su alto es el ancho/5—, para que
+   quede apoyada sobre las flores igual que en la portada. */
+.carta{
+  --carta-reserva:calc(max(320px, 28vh) * var(--ilustracion-escala, 1));
+  --carta-piso:calc(2vh + min(640px, 88vw) * 0.12);
+  position:relative; overflow:hidden;
+  padding-bottom:var(--carta-reserva);
+}
 .carta__texto{ font-family:var(--f-display); font-size:calc(clamp(1.15rem, 2.4vw, 1.5rem) * var(--scale-mensajes)); font-style:italic; color:var(--tinta); max-width:560px; margin:26px auto 22px; }
 .carta__firma{ font-family:var(--f-script); font-size:2rem; color:var(--rosa-deep); margin-bottom:10px; }
 
@@ -551,8 +562,10 @@ body.tarjetas-activas #detalles .ubicacion{
 .carta__dress{
   width:auto; height:auto;
   max-width:calc(min(180px, 34vw) * var(--ilustracion-escala, 1));
-  max-height:calc(max(280px, 24vh) * var(--ilustracion-escala, 1) - 26px);
-  position:absolute; bottom:-10px; left:50%;
+  /* Lo que queda entre su base (--carta-piso) y el borde de la
+     tarjeta, menos un respiro: así nunca la invade. */
+  max-height:calc(var(--carta-reserva) - var(--carta-piso) - 16px);
+  position:absolute; bottom:var(--carta-piso); left:50%;
   z-index:1; opacity:.95;
   animation:carta-dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
 }
@@ -564,11 +577,10 @@ body.tarjetas-activas #detalles .ubicacion{
 }
 .gate__dress-img, .carta__dress-img{ object-fit:contain; display:block; }
 @media (max-width:600px){
-  .carta{ padding-bottom:calc(max(240px, 26vh) * var(--ilustracion-escala, 1)); }
-  .carta__dress{
-    max-width:calc(min(150px, 40vw) * var(--ilustracion-escala, 1));
-    max-height:calc(max(240px, 26vh) * var(--ilustracion-escala, 1) - 26px);
-  }
+  /* Solo se redefine la reserva: el alto máximo y la base de la figura
+     se recalculan solos porque salen de estas dos variables. */
+  .carta{ --carta-reserva:calc(max(300px, 34vh) * var(--ilustracion-escala, 1)); }
+  .carta__dress{ max-width:calc(min(150px, 40vw) * var(--ilustracion-escala, 1)); }
 }
 
 /* COUNTDOWN */
