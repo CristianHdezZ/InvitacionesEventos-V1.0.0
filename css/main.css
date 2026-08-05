@@ -1,0 +1,39 @@
+/* ==========================================================
+   MAIN — punto de entrada de estilos
+   ==========================================================
+   head.html enlaza SOLO este archivo; desde aquí se decide
+   qué hojas se cargan. Así se puede reorganizar el CSS sin
+   volver a tocar el HTML.
+
+   Hoy la invitación se sigue viendo con style.css, que es la
+   hoja probada y afinada (portada, secciones, tarjetas,
+   decoración floral, responsive, etc.).
+
+   Los módulos de css/base.css, css/reset.css,
+   css/variables.css, css/layout/*, css/components/* y
+   css/utilities/* pertenecen al rediseño "Engine V2": usan
+   otros nombres de variables y otras medidas, así que
+   activarlos hoy cambiaría el diseño actual. Cuando se quiera
+   migrar, se van descomentando de a uno y se comprueba el
+   resultado antes de retirar style.css.
+   ========================================================== */
+
+@import url("style.css");
+
+/* --- Migración progresiva al Engine V2 (aún no activo) ---
+@import url("reset.css");
+@import url("variables.css");
+@import url("base.css");
+@import url("layout/gate.css");
+@import url("layout/hero.css");
+@import url("layout/sections.css");
+@import url("components/buttons.css");
+@import url("components/cards.css");
+@import url("components/countdown.css");
+@import url("components/gallery.css");
+@import url("components/modal.css");
+@import url("components/timeline.css");
+@import url("utilities/animations.css");
+@import url("utilities/helpers.css");
+@import url("utilities/responsive.css");
+*/

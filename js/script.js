@@ -1159,7 +1159,7 @@ function prepararTarjetaInvitacion(nombreInvitado, config, telefonoInvitado) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function iniciarInvitacion() {
 
   // Carga el contenido editable desde /api/config ANTES de inicializar
   // el resto (así el countdown, la galería y el itinerario ya usan los
@@ -1652,4 +1652,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-});
+}
+
+// Este archivo se carga de dos formas: directamente desde el HTML
+// (admin, o una versión de una sola pieza) o inyectado por
+// js/include.js una vez armados los parciales. En el segundo caso
+// DOMContentLoaded ya ocurrió, así que hay que arrancar de una vez.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', iniciarInvitacion);
+} else {
+  iniciarInvitacion();
+}

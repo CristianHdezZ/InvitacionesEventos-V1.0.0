@@ -30,6 +30,8 @@ app.use(express.json());
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+// Parciales de HTML que index.html arma con fetch (ver js/include.js).
+app.use('/html', express.static(path.join(__dirname, 'html')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
