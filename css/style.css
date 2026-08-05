@@ -382,13 +382,11 @@ body.tarjetas-activas .section-badge::after{
   border:1.5px solid var(--oro); opacity:.45;
 }
 body.tarjetas-activas .section-badge svg{ width:26px; height:26px; position:relative; z-index:1; }
-body.tarjetas-activas #detalles .ubicacion{
-  background:linear-gradient(165deg, #fff 0%, #fff 55%, var(--blush) 130%);
-  border-radius:26px;
-  box-shadow:0 26px 54px -26px rgba(139,79,98,.42), inset 0 0 0 1px rgba(184,147,92,.14);
-  padding:32px 28px;
-  margin-top:20px;
-}
+/* Ubicación y música: el bloque de contenido va DENTRO de
+   .section__inner, así que comparte la misma tarjeta que el título en
+   vez de formar una segunda. Solo se ajusta la separación. */
+body.tarjetas-activas #detalles .ubicacion,
+body.tarjetas-activas #musica .musica__inner{ margin-top:24px; }
 @media (max-width:600px){
   body.tarjetas-activas #cuenta .section__inner,
   body.tarjetas-activas #carta .section__inner,
@@ -415,7 +413,8 @@ body.tarjetas-activas #detalles .ubicacion{
   body.tarjetas-activas .section-badge{ left:22px; width:50px; height:50px; }
   body.tarjetas-activas .section-badge svg{ width:22px; height:22px; }
   body.tarjetas-activas .section__inner::after{ top:16px; right:18px; font-size:.85rem; }
-  body.tarjetas-activas #detalles .ubicacion{ padding:20px 18px; border-radius:20px; }
+  body.tarjetas-activas #detalles .ubicacion,
+  body.tarjetas-activas #musica .musica__inner{ margin-top:18px; }
 }
 
 /* =========================================================
