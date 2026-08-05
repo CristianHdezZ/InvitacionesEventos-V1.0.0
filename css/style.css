@@ -195,7 +195,7 @@ img[hidden]{ display:none; }
   /* Puede encogerse si falta espacio (min-height:0 lo permite dentro del
      flex). Con object-fit/preserveAspectRatio la figura se reescala sin
      deformarse, así se adapta sola a cualquier resolución. */
-  flex:0 1 auto; min-height:64px;
+  flex:0 1 auto; min-height:100px;
   margin:0 auto -4.5vh;
   position:relative; z-index:2;
   animation:dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
