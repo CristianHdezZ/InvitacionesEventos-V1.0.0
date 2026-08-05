@@ -107,7 +107,7 @@ img[hidden]{ display:none; }
    que las guirnaldas se coman todo el alto de la portada y aplasten a
    la quinceañera. Con object-fit:contain la imagen se reescala sola,
    sin deformarse. */
-.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); max-height:17vh; }
+.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); max-height:13vh; }
 .carta__garland.garland-img{ aspect-ratio:500 / 100; max-width:calc(640px * var(--floral-escala, 1)); }
 .garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
 .garland--bottom.garland-img{ transform:scaleY(-1); z-index:var(--floral-z-abajo,0); margin-top:-20px; }
@@ -196,7 +196,10 @@ img[hidden]{ display:none; }
   max-width:calc(min(260px, 50vw) * var(--ilustracion-escala, 1));
   max-height:34vh;
   object-fit:contain;
-  flex:0 0 auto;
+  /* Puede ceder alto si la pantalla lo exige, pero nunca baja de
+     min-height, así se adapta a cada resolución sin desaparecer ni
+     empujar la guirnalda fuera de la pantalla. */
+  flex:0 1 auto;
   min-height:120px;
   margin:18px auto -22px;
   position:relative;
@@ -223,7 +226,7 @@ img[hidden]{ display:none; }
   .gate__xv{ margin:3px 0 6px; }
   .gate__quote{ margin-bottom:8px; }
   .gate__envelope{ width:min(170px, 50vw); }
-  .gate__dress{ max-width:min(180px,42vw); max-height:24vh; margin-top:14px; margin-bottom:-15px; }
+  .gate__dress{ max-width:min(180px,42vw); max-height:19vh; margin-top:8px; margin-bottom:-30px; }
 }
 /* --- Celulares altos (tipo iPhone Pro Max) ---------------------------
    Con justify-content:space-between el espacio libre sobrante se repartía
@@ -233,8 +236,11 @@ img[hidden]{ display:none; }
    que ella y la guirnalda de abajo quedan juntas al pie. */
 @media (max-width:640px) and (min-height:821px){
   .gate{ justify-content:flex-start; }
-  .garland--top{ margin-bottom:2vh; }
-  .gate__dress{ margin-top:18px; max-width:min(230px,55vw); max-height:30vh; margin-bottom:-18px; }
+  .garland--top{ margin-bottom:1.2vh; }
+  /* Se conserva el tamaño grande de la figura; el espacio que faltaba se
+     recupera dejándola apoyada más adentro de la guirnalda (margen
+     inferior negativo) en vez de achicarla. */
+  .gate__dress{ margin-top:12px; max-width:min(230px,55vw); max-height:29vh; margin-bottom:-42px; }
 }
 .dress__body{ fill:var(--vestido); opacity:.92; }
 .dress__hair{ fill:var(--vino); opacity:.9; }
