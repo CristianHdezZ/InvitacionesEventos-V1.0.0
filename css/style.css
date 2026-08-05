@@ -116,8 +116,10 @@ img[hidden]{ display:none; }
    (más abajo en este archivo). Al usar imagen hay que repetirlos aquí
    con dos clases, para que el control de intensidad del admin sí la
    afecte y no se pierda el centrado al voltearla. */
+/* Ya no hace falta translateX: al estar en el flujo la centra el
+   propio contenedor. Solo se voltea para que cierre hacia arriba. */
 .carta__garland--bottom.garland-img{
-  transform:translateX(-50%) scaleY(-1);
+  transform:scaleY(-1);
   opacity:var(--floral-opacidad, 1);
   z-index:var(--floral-z-abajo, 0);
 }
@@ -537,45 +539,50 @@ body.tarjetas-activas #detalles .ubicacion{
 .section__title{ font-size:calc(clamp(1.7rem, 4vw, 2.6rem) * var(--scale-titulos)); margin-bottom:8px; }
 
 /* CARTA */
-/* --carta-reserva: el espacio que la sección aparta abajo para la
-   quinceañera y la guirnalda.
-   --carta-piso: a qué altura queda su base. Se calcula desde la
-   guirnalda (que está a 2vh del borde) subiendo un 60% de su alto
-   —la guirnalda es 5:1, así que su alto es el ancho/5—, para que
-   quede apoyada sobre las flores igual que en la portada. */
+/* Misma estructura que la portada: columna flex donde la quinceañera y
+   la guirnalda van EN EL FLUJO. Antes estaban posicionadas de forma
+   absoluta y por eso quedaba flotando sobre las flores en vez de
+   apoyarse en ellas, y sobraba un hueco grande debajo. */
 .carta{
-  --carta-reserva:calc(max(320px, 28vh) * var(--ilustracion-escala, 1));
-  --carta-piso:calc(2vh + min(640px, 88vw) * 0.12);
   position:relative; overflow:hidden;
-  padding-bottom:var(--carta-reserva);
+  display:flex; flex-direction:column; align-items:center;
 }
+/* La tarjeta del mensaje conserva su ancho completo dentro de la
+   columna centrada. */
+.carta > .section__inner{ width:100%; }
 .carta__texto{ font-family:var(--f-display); font-size:calc(clamp(1.15rem, 2.4vw, 1.5rem) * var(--scale-mensajes)); font-style:italic; color:var(--tinta); max-width:560px; margin:26px auto 22px; }
 .carta__firma{ font-family:var(--f-script); font-size:2rem; color:var(--rosa-deep); margin-bottom:10px; }
 
-.carta__garland{ width:100%; max-width:640px; height:auto; display:block; margin:0 auto; }
+.carta__garland{ width:100%; max-width:640px; height:auto; display:block; margin:0 auto; flex:0 0 auto; }
 .carta__garland--top{ margin-bottom:-10px; }
-.carta__garland--bottom{ position:absolute; bottom:2vh; left:50%; transform:translateX(-50%); z-index:0; opacity:.9; }
-/* El max-height la ata al espacio que la sección reserva abajo
-   (padding-bottom), para que nunca se monte sobre la tarjeta del
-   mensaje. Con max-width/max-height y width/height en auto, la figura
-   se reescala guardando su proporción, igual que en la portada. */
+/* En el flujo, con margen superior negativo para que la quinceañera
+   quede apoyada sobre las flores (igual que .garland--bottom). */
+.carta__garland--bottom{ position:relative; z-index:var(--floral-z-abajo, 0); opacity:.9; margin-top:-20px; }
+/* Mismas reglas que .gate__dress: se adapta al espacio disponible sin
+   deformarse y sin salirse, y el margen inferior negativo la apoya
+   sobre la guirnalda. */
 .carta__dress{
-  width:auto; height:auto;
-  max-width:calc(min(180px, 34vw) * var(--ilustracion-escala, 1));
-  /* Lo que queda entre su base (--carta-piso) y el borde de la
-     tarjeta, menos un respiro: así nunca la invade. */
-  max-height:calc(var(--carta-reserva) - var(--carta-piso) - 16px);
-  position:absolute; bottom:var(--carta-piso); left:50%;
-  z-index:1; opacity:.95;
-  animation:carta-dress-float 4.5s ease-in-out infinite; transform-origin:50% 100%;
-}
-@keyframes carta-dress-float{
-  0%, 100%{ transform:translateX(-50%) translateY(0) rotate(0deg); }
-  25%{ transform:translateX(-50%) translateY(-5px) rotate(-1.3deg); }
-  50%{ transform:translateX(-50%) translateY(-9px) rotate(0deg); }
-  75%{ transform:translateX(-50%) translateY(-5px) rotate(1.3deg); }
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:calc(min(260px, 50vw) * var(--ilustracion-escala, 1));
+  max-height:34vh;
+  object-fit:contain;
+  flex:0 1 auto;
+  min-height:120px;
+  margin:18px auto -22px;
+  position:relative;
+  z-index:3;
+  opacity:.95;
+  animation:dress-float 4.5s ease-in-out infinite;
+  transform-origin:50% 100%;
 }
 /*.gate__dress-img, .carta__dress-img{ object-fit:contain; display:block; }*/
+/* Cómo llena su caja la imagen. El margen NO se define aquí: lo
+   manejan .gate__dress / .carta__dress, que son las que la centran y
+   la apoyan sobre la guirnalda con margen negativo. Al ser ambas de
+   una sola clase, esta regla (más abajo en el archivo) ganaba y
+   borraba esos márgenes. */
 .gate__dress-img,
 .carta__dress-img{
   display:block;
@@ -583,13 +590,9 @@ body.tarjetas-activas #detalles .ubicacion{
   height:100%;
   object-fit:contain;
   object-position:center center;
-  margin:0 auto;
 }
 @media (max-width:600px){
-  /* Solo se redefine la reserva: el alto máximo y la base de la figura
-     se recalculan solos porque salen de estas dos variables. */
-  .carta{ --carta-reserva:calc(max(300px, 34vh) * var(--ilustracion-escala, 1)); }
-  .carta__dress{ max-width:calc(min(150px, 40vw) * var(--ilustracion-escala, 1)); }
+  .carta__dress{ max-width:calc(min(230px, 55vw) * var(--ilustracion-escala, 1)); max-height:30vh; }
 }
 
 /* COUNTDOWN */
