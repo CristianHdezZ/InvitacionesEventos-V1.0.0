@@ -107,10 +107,10 @@ img[hidden]{ display:none; }
    que las guirnaldas se coman todo el alto de la portada y aplasten a
    la quinceañera. Con object-fit:contain la imagen se reescala sola,
    sin deformarse. */
-.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); max-height:13vh; }
+.garland.garland-img{ aspect-ratio:500 / 140; width:calc(min(500px, 90vw) * var(--floral-escala, 1)); max-height:9vh; }
 .carta__garland.garland-img{ aspect-ratio:500 / 100; max-width:calc(640px * var(--floral-escala, 1)); }
 .garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
-.garland--bottom.garland-img{ transform:scaleY(-1); z-index:var(--floral-z-abajo,0); margin-top:-20px; }
+.garland--bottom.garland-img{ transform:scaleY(-1); z-index:var(--floral-z-abajo,0); margin-top:-28px; }
 .carta__garland--top.garland-img{ z-index:var(--floral-z-arriba, 0); }
 /* La guirnalda inferior de la carta trae su propio opacity y transform
    (más abajo en este archivo). Al usar imagen hay que repetirlos aquí
@@ -200,10 +200,11 @@ img[hidden]{ display:none; }
   object-fit:contain;
   /* Puede ceder alto si la pantalla lo exige, pero nunca baja de
      min-height, así se adapta a cada resolución sin desaparecer ni
-     empujar la guirnalda fuera de la pantalla. */
+     empujar la guirnalda fuera de la pantalla. El piso es alto para
+     que no quede diminuta frente a la corona y el nombre. */
   flex:0 1 auto;
-  min-height:120px;
-  margin:18px auto -22px;
+  min-height:210px;
+  margin:10px auto -44px;
   position:relative;
   z-index:3;
   animation:dress-float 4.5s ease-in-out infinite;
@@ -228,7 +229,8 @@ img[hidden]{ display:none; }
   .gate__xv{ margin:3px 0 6px; }
   .gate__quote{ margin-bottom:8px; }
   .gate__envelope{ width:min(170px, 50vw); }
-  .gate__dress{ max-width:min(180px,42vw); max-height:19vh; margin-top:8px; margin-bottom:-30px; }
+  /* En pantallas bajas el piso baja: aquí manda que quepa todo. */
+  .gate__dress{ max-width:min(180px,42vw); max-height:19vh; min-height:110px; margin-top:8px; margin-bottom:-30px; }
 }
 /* --- Celulares altos (tipo iPhone Pro Max) ---------------------------
    Con justify-content:space-between el espacio libre sobrante se repartía
